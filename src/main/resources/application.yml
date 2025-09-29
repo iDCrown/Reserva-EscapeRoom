@@ -1,8 +1,9 @@
 spring:
   datasource:
-    url: ${JDBC_DATABASE_URL:jdbc:h2:mem:Reserva}
-    username: ${JDBC_DATABASE_USERNAME:sa}
-    password: ${JDBC_DATABASE_PASSWORD:}
+    url: jdbc:mariadb://localhost:3306/reservaEscapeRoom
+    username: root
+    password: 
+    driver-class-name: org.mariadb.jdbc.Driver
     hikari:
       connection-timeout: 30000
       maximum-pool-size: 10

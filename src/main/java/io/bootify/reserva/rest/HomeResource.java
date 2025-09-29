@@ -1,15 +1,15 @@
 package io.bootify.reserva.rest;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 
 
-@RestController
+@Controller
 public class HomeResource {
 
-    @GetMapping("/")
+    @GetMapping("/homePage")
     public String index() {
-        return "\"Hello World!\"";
+        return "homePage";
     }
 
 }
