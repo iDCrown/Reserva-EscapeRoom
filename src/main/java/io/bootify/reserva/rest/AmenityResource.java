@@ -39,7 +39,7 @@ public class AmenityResource {
         return ResponseEntity.ok(amenityService.get(idAmenity));
     }
 
-    @PostMapping
+    @PostMapping("/createAmenity")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<Long> createAmenity(@RequestBody @Valid final AmenityDTO amenityDTO) {
         final Long createdIdAmenity = amenityService.create(amenityDTO);

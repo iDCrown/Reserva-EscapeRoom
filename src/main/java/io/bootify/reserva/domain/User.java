@@ -54,6 +54,13 @@ public class User {
 
     @Column
     private String telefono;
+    
+    @Column
+    private  String password;
+
+    @Column
+    private String username;
+
 
     @OneToMany(mappedBy = "user")
     private Set<Reserva> reservas = new HashSet<>();

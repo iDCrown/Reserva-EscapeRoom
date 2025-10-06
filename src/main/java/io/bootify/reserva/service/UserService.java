@@ -3,6 +3,7 @@ package io.bootify.reserva.service;
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.events.BeforeDeleteUser;
 import io.bootify.reserva.model.UserDTO;
+import io.bootify.reserva.model.UserRegisterDTO;
 import io.bootify.reserva.repos.UserRepository;
 import io.bootify.reserva.util.NotFoundException;
 import java.util.List;
@@ -23,6 +24,19 @@ public class UserService {
         this.publisher = publisher;
     }
 
+    
+    public UserDTO get(final Long idUser) {
+        return userRepository.findById(idUser)
+        .map(user -> mapToDTO(user, new UserDTO()))
+        .orElseThrow(NotFoundException::new);
+    }
+
+    public UserRegisterDTO getRegister(final Long idUser) {
+        return userRepository.findById(idUser)
+        .map(user -> mapToDTO(user, new UserRegisterDTO()))
+        .orElseThrow(NotFoundException::new);
+    }
+
     public List<UserDTO> findAll() {
         final List<User> users = userRepository.findAll(Sort.by("idUser"));
         return users.stream()
@@ -30,15 +44,9 @@ public class UserService {
                 .toList();
     }
 
-    public UserDTO get(final Long idUser) {
-        return userRepository.findById(idUser)
-                .map(user -> mapToDTO(user, new UserDTO()))
-                .orElseThrow(NotFoundException::new);
-    }
-
-    public Long create(final UserDTO userDTO) {
+    public Long create(final UserRegisterDTO userRegisterDTO) {
         final User user = new User();
-        mapToEntity(userDTO, user);
+        mapToEntity(userRegisterDTO, user);
         return userRepository.save(user).getIdUser();
     }
 
@@ -66,12 +74,33 @@ public class UserService {
         return userDTO;
     }
 
+    private UserRegisterDTO mapToDTO(final User user, final UserRegisterDTO userRegisterDTO) {
+        userRegisterDTO.setIdUser(user.getIdUser());
+        userRegisterDTO.setNombre(user.getNombre());
+        userRegisterDTO.setApellido(user.getApellido());
+        userRegisterDTO.setTipoDocumento(user.getTipoDocumento());
+        userRegisterDTO.setNumeroDocumento(user.getNumeroDocumento());
+        userRegisterDTO.setTelefono(user.getTelefono());
+        userRegisterDTO.setPassword(user.getPassword());
+        return userRegisterDTO;
+    }
+
     private User mapToEntity(final UserDTO userDTO, final User user) {
         user.setNombre(userDTO.getNombre());
         user.setApellido(userDTO.getApellido());
         user.setTipoDocumento(userDTO.getTipoDocumento());
         user.setNumeroDocumento(userDTO.getNumeroDocumento());
         user.setTelefono(userDTO.getTelefono());
+        return user;
+    }
+
+    private User mapToEntity(final UserRegisterDTO userRegisterDTO, final User user) {
+        user.setNombre(userRegisterDTO.getNombre());
+        user.setApellido(userRegisterDTO.getApellido());
+        user.setTipoDocumento(userRegisterDTO.getTipoDocumento());
+        user.setNumeroDocumento(userRegisterDTO.getNumeroDocumento());
+        user.setTelefono(userRegisterDTO.getTelefono());
+        user.setPassword(userRegisterDTO.getPassword());
         return user;
     }
 
