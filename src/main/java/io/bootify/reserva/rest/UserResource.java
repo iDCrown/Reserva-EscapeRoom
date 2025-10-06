@@ -59,4 +59,9 @@ public class UserResource {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/login")
+    public String welcome(){
+        return "Welcome to Spring Security";
+    }
+
 }

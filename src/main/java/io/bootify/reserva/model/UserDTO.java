@@ -26,4 +26,10 @@ public class UserDTO {
     @Size(max = 255)
     private String telefono;
 
+    @Size(max = 255)
+    private String username;
+
+    @Size(max = 255)
+    private String password;
+
 }
