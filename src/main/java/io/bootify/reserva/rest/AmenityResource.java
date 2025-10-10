@@ -1,4 +1,4 @@
-package io.bootify.reserva.rest;
+/* package io.bootify.reserva.rest;
 
 import io.bootify.reserva.model.AmenityDTO;
 import io.bootify.reserva.service.AmenityService;
@@ -39,7 +39,7 @@ public class AmenityResource {
         return ResponseEntity.ok(amenityService.get(idAmenity));
     }
 
-    @PostMapping
+    @PostMapping("/createAmenity")
     @ApiResponse(responseCode = "201")
     public ResponseEntity<Long> createAmenity(@RequestBody @Valid final AmenityDTO amenityDTO) {
         final Long createdIdAmenity = amenityService.create(amenityDTO);
@@ -63,3 +63,4 @@ public class AmenityResource {
     }
 
 }
+ */

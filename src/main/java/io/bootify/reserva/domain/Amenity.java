@@ -41,6 +41,9 @@ public class Amenity {
     private Long idAmenity;
 
     @Column
+    private String imageUrl;
+
+    @Column
     private String nombre;
 
     @Column

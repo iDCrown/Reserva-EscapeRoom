@@ -2,9 +2,9 @@ package io.bootify.reserva.Jwt;
 
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
-
-
+import org.springframework.stereotype.Component;
 import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import org.springframework.util.StringUtils;
@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     @Override

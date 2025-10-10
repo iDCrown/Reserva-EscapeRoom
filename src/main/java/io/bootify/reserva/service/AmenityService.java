@@ -1,4 +1,4 @@
-package io.bootify.reserva.service;
+/* package io.bootify.reserva.service;
 
 import io.bootify.reserva.domain.Amenity;
 import io.bootify.reserva.domain.Reserva;
@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import io.bootify.reserva.service.mapper.AmenityMapper;
 
 
 @Service
@@ -19,17 +20,19 @@ public class AmenityService {
 
     private final AmenityRepository amenityRepository;
     private final ReservaRepository reservaRepository;
+    private final AmenityMapper amenityMapper;
 
     public AmenityService(final AmenityRepository amenityRepository,
-            final ReservaRepository reservaRepository) {
+        final ReservaRepository reservaRepository, AmenityMapper amenityMapper) {
         this.amenityRepository = amenityRepository;
         this.reservaRepository = reservaRepository;
+        this.amenityMapper = amenityMapper;
     }
 
     public List<AmenityDTO> findAll() {
-        final List<Amenity> amenities = amenityRepository.findAll(Sort.by("idAmenity"));
-        return amenities.stream()
-                .map(amenity -> mapToDTO(amenity, new AmenityDTO()))
+        return amenityRepository.findAll()
+                .stream()
+                .map(amenityMapper::toDto)
                 .toList();
     }
 
@@ -60,6 +63,7 @@ public class AmenityService {
 
     private AmenityDTO mapToDTO(final Amenity amenity, final AmenityDTO amenityDTO) {
         amenityDTO.setIdAmenity(amenity.getIdAmenity());
+        amenityDTO.setImageUrl(amenity.getImageUrl());
         amenityDTO.setNombre(amenity.getNombre());
         amenityDTO.setDescripcion(amenity.getDescripcion());
         amenityDTO.setCapacidad(amenity.getCapacidad());
@@ -70,6 +74,7 @@ public class AmenityService {
 
     private Amenity mapToEntity(final AmenityDTO amenityDTO, final Amenity amenity) {
         amenity.setNombre(amenityDTO.getNombre());
+        amenity.setImageUrl(amenityDTO.getImageUrl());
         amenity.setDescripcion(amenityDTO.getDescripcion());
         amenity.setCapacidad(amenityDTO.getCapacidad());
         amenity.setCategoria(amenityDTO.getCategoria());
@@ -91,3 +96,4 @@ public class AmenityService {
     }
 
 }
+ */

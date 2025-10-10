@@ -18,16 +18,39 @@
         }
     </style>
     <!-- fragmento header -->
-    <div th:replace="fragments :: header"></div>
+    <div th:replace="~{fragments :: header}"></div>
 
     <!-- salas -->
      <main>
         <section class="d-flex justify-content-center align-items-center w-100 position-relative ">
             <img src="https://rowkaescaperoom.com/wp-content/uploads/2022/07/tipos-escape-room.jpg" alt="">
             <div class="text-center position-absolute content w-50">
-                <h1>Bienvenidos</h1>
-                <h3>¿TERROR, MISTERIO O AVENTURA?</h3>
+                <h1>BIENVENIDOS</h1>
+                <h3>¿Terror, Misterio o Aventura?</h3>
                 <p>En Escape Room podrás elegir entre una gran variedad de salas de escape para vivir una experiencia única e inolvidable con tus amigos. ¿Te atreves a descubrirlas todas?</p>
+            </div>
+        </section>
+        <section>
+            <div class="container mt-5">
+                <h1 class="text-center mb-4">Salas disponibles</h1>
+
+                <div class="row" th:if="${#lists.isEmpty(amenity)}">
+                    <p class="text-center">No hay salas disponibles en este momento.</p>
+                </div>
+
+                <div class="row" th:each="amenity : ${amenity}">
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <img th:src="${amenity.imageUrl}" class="card-img-top" alt="Imagen de sala">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${amenity.nombre}">Nombre de la sala</h5>
+                                <span th:text="${amenity.capacidad}">8</span>
+                                <span th:text="${amenity.categoria}">terror</span>
+                                <!-- <a th:href="@{'/reservar/' + ${amenity.idAmenity}}" class="btn btn-primary w-100">Reservar</a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
      </main>

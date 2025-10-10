@@ -1,25 +1,28 @@
 package io.bootify.reserva.rest;
 
 import io.bootify.reserva.model.UserDTO;
+import io.bootify.reserva.model.UserRegisterDTO;
 import io.bootify.reserva.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.ui.Model;
 
-@RestController
-@RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
+import org.springframework.stereotype.Controller;
+
+@Controller
+@RequestMapping("/users")
 public class UserResource {
 
     private final UserService userService;
@@ -38,16 +41,11 @@ public class UserResource {
         return ResponseEntity.ok(userService.get(idUser));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createUser(@RequestBody @Valid final UserDTO userDTO) {
-        final Long createdIdUser = userService.create(userDTO);
-        return new ResponseEntity<>(createdIdUser, HttpStatus.CREATED);
-    }
+
 
     @PutMapping("/{idUser}")
     public ResponseEntity<Long> updateUser(@PathVariable(name = "idUser") final Long idUser,
-            @RequestBody @Valid final UserDTO userDTO) {
+        @RequestBody @Valid final UserDTO userDTO) {
         userService.update(idUser, userDTO);
         return ResponseEntity.ok(idUser);
     }
