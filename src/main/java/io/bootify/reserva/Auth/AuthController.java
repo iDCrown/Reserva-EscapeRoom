@@ -36,10 +36,9 @@ public class AuthController {
     }
 
     @PostMapping(value = "register")
-    public /* ResponseEntity<String> */ String createUser(@ModelAttribute("user") /* @RequestBody */ UserRegisterDTO UserRegisterDTO, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+    public  String createUser(@ModelAttribute("user")  UserRegisterDTO UserRegisterDTO, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
         userService.create(UserRegisterDTO);
         redirectAttributes.addFlashAttribute("successMessage", "Usuario registrado exitosamente.");
-        /* return ResponseEntity.ok("User registered successfully"); */
         return "redirect:/homePage";
     }
 }
