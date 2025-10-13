@@ -1,5 +1,6 @@
 package io.bootify.reserva.service;
 
+import io.bootify.reserva.domain.Amenity;
 import io.bootify.reserva.domain.Reserva;
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.events.BeforeDeleteReserva;
@@ -7,6 +8,7 @@ import io.bootify.reserva.events.BeforeDeleteUser;
 import io.bootify.reserva.model.ReservaDTO;
 import io.bootify.reserva.repos.ReservaRepository;
 import io.bootify.reserva.repos.UserRepository;
+import io.bootify.reserva.repos.AmenityRepository;
 import io.bootify.reserva.util.NotFoundException;
 import io.bootify.reserva.util.ReferencedException;
 import java.util.List;
@@ -21,12 +23,14 @@ public class ReservaService {
 
     private final ReservaRepository reservaRepository;
     private final UserRepository userRepository;
+    private final AmenityRepository amenityRepository;
     private final ApplicationEventPublisher publisher;
 
     public ReservaService(final ReservaRepository reservaRepository,
-            final UserRepository userRepository, final ApplicationEventPublisher publisher) {
+            final UserRepository userRepository, final ApplicationEventPublisher publisher, final AmenityRepository amenityRepository) {
         this.reservaRepository = reservaRepository;
         this.userRepository = userRepository;
+        this.amenityRepository = amenityRepository;
         this.publisher = publisher;
     }
 
@@ -70,6 +74,7 @@ public class ReservaService {
         reservaDTO.setHoraFin(reserva.getHoraFin());
         reservaDTO.setNumeroPersonas(reserva.getNumeroPersonas());
         reservaDTO.setUser(reserva.getUser() == null ? null : reserva.getUser().getIdUser());
+        reservaDTO.setAmenity(reserva.getAmenity() == null ? null : reserva.getAmenity().getIdAmenity());
         return reservaDTO;
     }
 
@@ -81,6 +86,9 @@ public class ReservaService {
         final User user = reservaDTO.getUser() == null ? null : userRepository.findById(reservaDTO.getUser())
                 .orElseThrow(() -> new NotFoundException("user not found"));
         reserva.setUser(user);
+        final Amenity amenity = reservaDTO.getAmenity() == null ? null : amenityRepository.findById(reservaDTO.getAmenity())
+                .orElseThrow(() -> new NotFoundException("amenity not found"));
+        reserva.setAmenity(amenity);
         return reserva;
     }
 
@@ -94,5 +102,15 @@ public class ReservaService {
             throw referencedException;
         }
     }
+    //   @EventListener(BeforeDeleteReserva.class)
+    //     public void on(final BeforeDeleteReserva event) {
+    //     final ReferencedException referencedException = new ReferencedException();
+    //     final Reserva AmenityReserva = reservaRepository.findFirstByAmenityIdAmenity(event.getIdAmenity());
+    //     if (AmenityReserva != null) {
+    //         referencedException.setKey("amenity.reserva.amenity.referenced");
+    //         referencedException.addParam(AmenityReserva.getIdReserva());
+    //         throw referencedException;
+    //     }
+    // }
 
 }

@@ -25,4 +25,6 @@ public class ReservaDTO {
 
     private Long user;
 
+    private Long amenity;
+
 }

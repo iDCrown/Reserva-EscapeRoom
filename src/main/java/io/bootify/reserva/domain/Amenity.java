@@ -9,9 +9,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -55,9 +59,8 @@ public class Amenity {
     @Column
     private String categoria;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reserva_id")
-    private Reserva reserva;
+    @OneToMany(mappedBy = "amenity")
+    private Set<Reserva> reserva = new HashSet<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
