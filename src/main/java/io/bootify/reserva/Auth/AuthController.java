@@ -24,8 +24,20 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping(value = "login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authService.login(request));
+    public String login(@ModelAttribute LoginRequest request, Model model) {
+        AuthResponse response = authService.login(request);
+
+        if (response == null) {
+        model.addAttribute("error", "Usuario o contraseña incorrectos.");
+        return "/auth/login"; // vuelve al login si falla
+    }
+        return "redirect:/homePage";
+    }
+
+    @GetMapping(value = "login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("loginRequest", new LoginRequest());
+        return "login";
     }
 
     @GetMapping(value = "register")
