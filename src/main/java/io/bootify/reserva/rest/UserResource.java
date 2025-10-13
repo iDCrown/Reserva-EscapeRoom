@@ -36,9 +36,6 @@ public class UserResource {
         this.userService = userService;
     }
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.findAll());
@@ -50,29 +47,10 @@ public class UserResource {
     }
 
 
-    @GetMapping("/register")
-    public String register (Model model) {
-        model.addAttribute("user", new UserRegisterDTO());
-        return "register";
-
-    }
-
-    @PostMapping("/register")
-    public String createUser(@ModelAttribute("user") UserRegisterDTO UserRegisterDTO) {
-
-        if(UserRegisterDTO.getPassword() == null || UserRegisterDTO.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
-        }
-
-        UserRegisterDTO.setPassword(passwordEncoder.encode(UserRegisterDTO.getPassword()));
-        userService.create(UserRegisterDTO);
-        return "redirect:/homePage";
-    }
 
     @PutMapping("/{idUser}")
     public ResponseEntity<Long> updateUser(@PathVariable(name = "idUser") final Long idUser,
-            @RequestBody @Valid final UserDTO userDTO) {
-            
+        @RequestBody @Valid final UserDTO userDTO) {
         userService.update(idUser, userDTO);
         return ResponseEntity.ok(idUser);
     }
@@ -82,6 +60,11 @@ public class UserResource {
     public ResponseEntity<Void> deleteUser(@PathVariable(name = "idUser") final Long idUser) {
         userService.delete(idUser);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/login")
+    public String welcome(){
+        return "Welcome to Spring Security";
     }
 
 }

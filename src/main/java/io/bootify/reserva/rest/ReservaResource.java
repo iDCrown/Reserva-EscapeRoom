@@ -67,13 +67,13 @@ public class ReservaResource {
 
         //Obtener el Id del usuario autenticado
 
-        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // String username = authentication.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        // User user = userRepository.findByUsername(username)
-        //         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        // reservaDTO.setUser(user.getIdUser());
+        reservaDTO.setUser(user.getIdUser());
 
         LocalTime horaInicio = reservaDTO.getHoraInicio();
         System.out.println("Hora de inicio recibida: " + horaInicio);

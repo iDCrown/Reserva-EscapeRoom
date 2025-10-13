@@ -9,5 +9,4 @@ import lombok.Getter;
 public class BeforeDeleteReserva {
 
     private Long idReserva;
-
 }

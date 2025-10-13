@@ -1,5 +1,6 @@
 package io.bootify.reserva.model;
 
+import io.bootify.reserva.domain.Role;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,5 +26,8 @@ public class UserDTO {
 
     @Size(max = 255)
     private String telefono;
+
+    @Size(max = 6)
+    private Role role;
 
 }

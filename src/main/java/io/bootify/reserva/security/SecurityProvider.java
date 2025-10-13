@@ -6,29 +6,42 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+
+import io.bootify.reserva.repos.UserRepository;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityProvider {
 
-    private final UserDetailsService userDetailsService;
-    
-    public SecurityProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    private final UserRepository userRepository;
+
+
+    @Bean
+    public UserDetailsService userDetailsService(){
+        return username -> userRepository.findByUsername(username)
+        .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        System.out.println("✅ PasswordEncoder de tipo BCryptPasswordEncoder inicializado");
+        return new BCryptPasswordEncoder();
     }
     
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(encoder());
-        
+
+        provider.setUserDetailsService(userDetailsService());
+        provider.setPasswordEncoder(passwordEncoder());
+
         return provider;
     }
     @Bean
@@ -37,24 +50,7 @@ public class SecurityProvider {
     }
     
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/amenities/**", "/homePage", "/login", "/vistaSala", "/users/**", "/api/reservas/**").permitAll()
-            .anyRequest().authenticated()
-            )
-
-            // .formLogin(form -> form
-            //     .loginPage("/login")
-            //     .defaultSuccessUrl("/homePage", true)
-            //     .permitAll()
-            // )
-            // .logout(logout -> logout
-            //     .logoutUrl("/logout")
-            //     .logoutSuccessUrl("/homePage")
-            //     .permitAll()
-            // )
-            .build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

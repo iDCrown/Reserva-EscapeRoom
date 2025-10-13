@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<header>
+<head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=account_circle" /></header>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0&icon_names=account_circle" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
 <body>
     <!-- Los fragments son componentes que usaremos para incluir en cada pagina y evitar escribir codigo repetitivo -->
     <!-- Header fragment-->
@@ -12,7 +15,7 @@
             <nav class="d-flex justify-content-end">
                 <a href="#">
                     <span class="material-symbols-outlined text-white fs-2 me-3">
-                    account_circle
+                        account_circle
                     </span>
                 </a>
             </nav>
@@ -20,6 +23,64 @@
     </div>
 
     <!-- Footer fragment -->
+
+    <footer class="bg-black text-white" th:fragment="footer">
+        <div class="container px-4">
+            <div class="row">
+                <div class="col-6 col-lg-4">
+                    <h3  class="pt-3 fw-bold">EscapeRoom</h3>
+                    <p>Carrera inventada # quiensabe-quizás</p>
+                    <p>+573028283845</p>
+                    <p>+573000000001</p>
+                </div>
+                <div class="col ">
+                    <h4 class="pt-3 fw-bold">Menú</h4>
+
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                    </ul>
+                    
+                </div>
+                <div class="col">
+                    <h4 class="pt-3 fw-bold">Sedes</h4>
+                    <ul>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                    </ul> 
+                </div> 
+                <div class="col"> 
+                    <h4 class="pt-3 fw-bold">Horarios</h4> 
+                    <ul>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-3 text-lg-end">
+                    <h4 class="pt-3 fw-bold">Redes Sociales</h4>
+                    <!-- Iconos redes sociales -->
+                     <div>
+                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-instagram fs-2 me-3"></i></a>
+                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-facebook fs-2 me-3"></i></a>
+                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-twitter fs-2 me-3"></i></a>
+                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-linkedin fs-2"></i></a>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </html>

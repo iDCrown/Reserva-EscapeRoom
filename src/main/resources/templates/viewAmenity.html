@@ -64,7 +64,7 @@
     const isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
 
     button.addEventListener("click", function () {
-        if (!isAuthenticated) {
+        if (isAuthenticated) {
             // Mostrar modal de Bootstrap
             const reservaModal = new bootstrap.Modal(modal);
             reservaModal.show();
