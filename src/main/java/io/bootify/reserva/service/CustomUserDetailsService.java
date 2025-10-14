@@ -17,11 +17,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .map(user -> org.springframework.security.core.userdetails.User
-                        .withUsername(user.getUsername())
-                        .password(user.getPassword())
-                        .authorities("USER")
-                        .build())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+            .map(user -> org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities("USER")
+                .build())
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

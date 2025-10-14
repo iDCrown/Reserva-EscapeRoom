@@ -1,11 +1,14 @@
 package io.bootify.reserva.rest;
 
+import io.bootify.reserva.domain.User;
 import io.bootify.reserva.model.UserDTO;
 import io.bootify.reserva.model.UserRegisterDTO;
 import io.bootify.reserva.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,9 +20,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
 import org.springframework.ui.Model;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 @RequestMapping("/users")
@@ -30,6 +35,9 @@ public class UserResource {
     public UserResource(final UserService userService) {
         this.userService = userService;
     }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {

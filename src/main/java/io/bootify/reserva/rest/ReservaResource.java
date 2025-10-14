@@ -1,36 +1,59 @@
 package io.bootify.reserva.rest;
 
+import io.bootify.reserva.domain.User;
 import io.bootify.reserva.model.ReservaDTO;
 import io.bootify.reserva.service.ReservaService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+import java.net.Authenticator;
+import java.sql.Time;
+import java.time.LocalTime;
+
+import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.bootify.reserva.repos.UserRepository;
 
 
-@RestController
-@RequestMapping(value = "/api/reservas", produces = MediaType.APPLICATION_JSON_VALUE)
+
+@Controller
+@RequestMapping("/api/reservas")
 public class ReservaResource {
 
     private final ReservaService reservaService;
+    private final UserRepository userRepository;
 
-    public ReservaResource(final ReservaService reservaService) {
+    public ReservaResource(final ReservaService reservaService, final UserRepository userRepository) {
         this.reservaService = reservaService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
     public ResponseEntity<List<ReservaDTO>> getAllReservas() {
         return ResponseEntity.ok(reservaService.findAll());
+    }
+
+    //Este mapeo es para mostrar el formulario de reserva pero realmente deberia ser el endpoind de detalle de un amenity
+    @GetMapping("/verReserva")
+    public String reserva(Model model) {
+        model.addAttribute("reserva", new ReservaDTO());
+        return "viewAmenity";
     }
 
     @GetMapping("/{idReserva}")
@@ -39,11 +62,30 @@ public class ReservaResource {
         return ResponseEntity.ok(reservaService.get(idReserva));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createReserva(@RequestBody @Valid final ReservaDTO reservaDTO) {
-        final Long createdIdReserva = reservaService.create(reservaDTO);
-        return new ResponseEntity<>(createdIdReserva, HttpStatus.CREATED);
+    @PostMapping("/createReserva")
+    public String createReserva(@ModelAttribute("reserva") @Valid final ReservaDTO reservaDTO) {
+
+        //Obtener el Id del usuario autenticado
+
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // String username = authentication.getName();
+
+        // User user = userRepository.findByUsername(username)
+        //         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        // reservaDTO.setUser(user.getIdUser());
+
+        LocalTime horaInicio = reservaDTO.getHoraInicio();
+        System.out.println("Hora de inicio recibida: " + horaInicio);
+
+
+        if(horaInicio != null) {
+            final LocalTime horaFin = horaInicio.plusHours(1);
+            reservaDTO.setHoraFin(horaFin);
+        }
+
+        reservaService.create(reservaDTO);
+        return "redirect:/homePage";
     }
 
     @PutMapping("/{idReserva}")

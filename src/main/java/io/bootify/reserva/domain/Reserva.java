@@ -61,8 +61,9 @@ public class Reserva {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "reserva")
-    private Set<Amenity> amenities = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "amenity_id")
+    private Amenity amenity;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

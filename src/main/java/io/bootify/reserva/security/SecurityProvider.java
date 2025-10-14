@@ -34,7 +34,7 @@ public class SecurityProvider {
         System.out.println("✅ PasswordEncoder de tipo BCryptPasswordEncoder inicializado");
         return new BCryptPasswordEncoder();
     }
-
+    
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -44,7 +44,11 @@ public class SecurityProvider {
 
         return provider;
     }
-
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+    
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -55,7 +59,7 @@ public class SecurityProvider {
         return http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/amenities/createAmenity", "/homePage", "/login", "/vistaSala", "/users/**").permitAll()
+            .requestMatchers("/api/amenities/**", "/homePage", "/login", "/vistaSala", "/users/**", "/api/reservas/**").permitAll()
             .anyRequest().authenticated()
             )
 

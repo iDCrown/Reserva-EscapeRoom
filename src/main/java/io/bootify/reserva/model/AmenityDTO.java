@@ -24,6 +24,4 @@ public class AmenityDTO {
     @Size(max = 255)
     private String categoria;
 
-    private Long reserva;
-
 }
