@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.bootify.reserva.model.UserRegisterDTO;
 import io.bootify.reserva.service.AuthService;
 import io.bootify.reserva.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +26,23 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping(value = "login")
-    public String login(@ModelAttribute LoginRequest request, Model model) {
+    public /* ResponseEntity<String> */ String login(@ModelAttribute /* @RequestBody */ LoginRequest request, Model model, HttpServletResponse responses) {
         AuthResponse response = authService.login(request);
+        /* return ResponseEntity.ok(response.getToken()); */
 
         if (response == null) {
         model.addAttribute("error", "Usuario o contraseña incorrectos.");
         return "/auth/login"; // vuelve al login si falla
     }
+
+        //Creación de una cookie que mantenga la sesión iniciada con el token JWT
+        Cookie cookie = new Cookie("token", response.getToken());
+        cookie.setHttpOnly(true); // Se evita el acceso desde JavaScript
+        cookie.setPath("/"); // La cookie es válida para todo el dominio
+        cookie.setMaxAge(24 * 60 * 60); // La cookie dura un día
+
+        responses.addCookie(cookie);
+
         return "redirect:/homePage";
     }
 

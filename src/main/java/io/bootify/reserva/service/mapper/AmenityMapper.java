@@ -1,4 +1,4 @@
-/* package io.bootify.reserva.service.mapper;
+package io.bootify.reserva.service.mapper;
 import io.bootify.reserva.domain.Amenity;
 import io.bootify.reserva.model.AmenityDTO;
 import org.mapstruct.Mapper;
@@ -24,4 +24,3 @@ public interface AmenityMapper {
     }
 
 }
- */

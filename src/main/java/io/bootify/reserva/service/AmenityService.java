@@ -1,4 +1,4 @@
-/* package io.bootify.reserva.service;
+package io.bootify.reserva.service;
 
 import io.bootify.reserva.domain.Amenity;
 import io.bootify.reserva.events.BeforeDeleteReserva;
@@ -75,4 +75,3 @@ public class AmenityService {
     }
 
 }
- */

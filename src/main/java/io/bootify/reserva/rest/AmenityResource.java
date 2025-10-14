@@ -1,4 +1,4 @@
-/* package io.bootify.reserva.rest;
+package io.bootify.reserva.rest;
 
 import io.bootify.reserva.model.AmenityDTO;
 import io.bootify.reserva.service.AmenityService;
@@ -63,4 +63,3 @@ public class AmenityResource {
     }
 
 }
- */

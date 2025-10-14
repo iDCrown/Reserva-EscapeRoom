@@ -1,6 +1,7 @@
 package io.bootify.reserva.service;
 
 import io.bootify.reserva.domain.Role;
+import io.bootify.reserva.domain.Status;
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.events.BeforeDeleteUser;
 import io.bootify.reserva.model.UserDTO;
@@ -13,6 +14,7 @@ import java.util.List;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.RequiredArgsConstructor;
 
@@ -90,6 +92,7 @@ public class UserService {
         user.setTelefono(userRegisterDTO.getTelefono());
         user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         user.setRole(Role.USER);
+        user.setStatus(Status.ACTIVO);
         return userRegisterDTO;
     }
 
@@ -111,7 +114,21 @@ public class UserService {
         user.setUsername(userRegisterDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         user.setRole(Role.USER);
+        user.setStatus(Status.ACTIVO);
         return user;
+    }
+
+    public UserDTO getCurrentUser(UserDetails userDetails) {
+        return userRepository.findByUsername(userDetails.getUsername())
+                .map(user -> mapToDTOUser(user, new UserDTO()))
+                .orElseThrow(NotFoundException::new);
+    }
+
+    public void deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(NotFoundException::new);
+        user.setStatus(Status.INACTIVO);
+        userRepository.save(user);
     }
 
 }
