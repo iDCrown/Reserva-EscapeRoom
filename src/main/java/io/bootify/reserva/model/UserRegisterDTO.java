@@ -1,4 +1,6 @@
 package io.bootify.reserva.model;
+import java.io.ObjectInputFilter.Status;
+
 import io.bootify.reserva.domain.Role;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -34,6 +36,9 @@ public class UserRegisterDTO {
 
     @Size(max = 6)
     private Role role;
+
+    @Size(max = 255)
+    private Status status;
 
 
 }

@@ -61,5 +61,4 @@ public class AmenityResource {
         amenityService.delete(idAmenity);
         return ResponseEntity.noContent().build();
     }
-
 }

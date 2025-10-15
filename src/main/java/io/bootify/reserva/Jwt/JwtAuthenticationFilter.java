@@ -18,6 +18,7 @@ import io.bootify.reserva.service.JwtService;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -60,6 +61,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if ("token".equals(cookie.getName())) {
+                        return cookie.getValue();
+                    }
+                }
+            }
+
+        // Si no hay cookie, buscar en encabezado Authorization
 
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);

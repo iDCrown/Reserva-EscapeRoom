@@ -82,6 +82,9 @@ public class User implements UserDetails{
     @Enumerated(EnumType.STRING)
     Role role;
 
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVO;
+
     @OneToMany(mappedBy = "user")
     private Set<Reserva> reservas = new HashSet<>();
 

@@ -33,7 +33,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(authRequest -> 
                 authRequest
-                    .requestMatchers("/auth/**", "/homePage", "/api/reservas/**").permitAll()
+                    .requestMatchers("/auth/**", "/homePage", "/api/reservas/**", "/logout").permitAll()
                     .anyRequest().authenticated()
                     )
             .sessionManagement(sessionManager-> 
@@ -42,6 +42,14 @@ public class SecurityConfig {
             )
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(JwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+           
+            .logout(logout -> 
+                logout
+                    .logoutUrl("/logout") //endopoint para cerrar sesion
+                    .logoutSuccessUrl("/homePage") //a donde redirige despues de cerrar sesion
+                    .deleteCookies("JSESSIONID", "token")
+                    .invalidateHttpSession(true)
+            )
             .build();
     }
 }
