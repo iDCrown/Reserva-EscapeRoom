@@ -12,10 +12,12 @@
         <header class="header" th:fragment="header">
             <div class="header-content">
                 <div class="logo-section">
-                    <div class="logo-icon">🔒</div>
-                    <div class="logo-text">
-                        <h1>Escape Room</h1>
-                    </div>
+                    <a th:href="@{/homePage}">
+                        <div class="logo-icon">🔒</div>
+                        <div class="logo-text">
+                            <h1>Escape Room</h1>
+                        </div>
+                    </a>
                 </div>
                 <a id="btnLogin"
                     sec:authorize="!isAuthenticated()"
@@ -23,9 +25,9 @@
                     <button class="btn btn-danger btn-logout">Inicio sesión</button>
                 </a>
                 <form class="formButtons" action="/logout" method="post" sec:authorize="isAuthenticated()">
-                    <span class="user-name">Bienvenido, <strong th:text="${user}">Usuario</strong>
+                    <span class="user-name">Bienvenido, <strong th:text="${userProfile}">Usuario</strong>
                     </span>
-                    <a href="#">
+                    <a th:href="@{/miPerfil}">
                         <span class="btn btn-logout">Mi perfil</span>
                     </a>
                     <div class="user-menu">

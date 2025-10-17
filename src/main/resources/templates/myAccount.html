@@ -384,7 +384,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <!-- <header class="header">
         <div class="header-content">
             <div class="logo-section">
                 <div class="logo-icon">🔒</div>
@@ -393,13 +393,16 @@
                 </div>
             </div>
             <div class="user-menu">
-                <span class="user-name">Bienvenido, <strong th:text="${user.nombre}">Usuario</strong></span>
+                <span class="user-name">Bienvenido, <strong th:text="${userProfile.nombre}">Usuario</strong></span>
                 <a href="#" class="btn-logout">
                     <i class="fas fa-sign-out-alt"></i> Cerrar sesión
                 </a>
             </div>
         </div>
-    </header>
+    </header> -->
+
+    <!-- fragmento header -->
+    <div th:replace="~{fragments/fragments :: header}"></div>
 
     <!-- Main Container -->
     <div class="main-container">
@@ -409,14 +412,14 @@
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <div class="user-fullname" th:text="${user.nombre + ' ' + user.apellido}">Nombre Completo</div>
-                <div class="user-username" th:text="'@' + ${user.username}">@usuario</div>
+                <div class="user-fullname" th:text="${userProfile.nombre + ' ' + userProfile.apellido}"></div>
+                <div class="user-username" th:text="'@' + ${userProfile.username}"></div>
             </div>
 
             <nav>
                 <ul class="sidebar-menu">
                     <li class="menu-item">
-                        <a href="#" class="menu-link active">
+                        <a href="javascript:void(0)" class="menu-link active">
                             <i class="fas fa-user-circle"></i>
                             <span>Mi Perfil</span>
                         </a>
@@ -428,13 +431,13 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="#" class="menu-link" onclick="showEditModal(); return false;">
+                        <a href="javascript:void(0)" class="menu-link" onclick="showEditModal()">
                             <i class="fas fa-edit"></i>
                             <span>Editar Perfil</span>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a href="#" class="menu-link" onclick="showDeleteModal(); return false;">
+                        <a href="javascript:void(0)" class="menu-link" onclick="showDeleteModal()">
                             <i class="fas fa-trash-alt"></i>
                             <span>Eliminar Perfil</span>
                         </a>
@@ -449,59 +452,41 @@
             <div class="profile-card">
                 <div class="card-header">
                     <h2 class="card-title">Información Personal</h2>
-                    <button class="btn-change-password" onclick="showPasswordModal()">
+                    <button type="button" class="btn-change-password" onclick="showPasswordModal()">
                         <i class="fas fa-key"></i> Cambiar Contraseña
                     </button>
                 </div>
 
                 <div class="info-grid">
                     <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-user"></i>
-                            Nombre Completo
-                        </div>
-                        <div class="info-value" th:text="${user.nombre + ' ' + user.apellido}">Nombre Apellido</div>
+                        <div class="info-label"><i class="fas fa-user"></i> Nombre Completo</div>
+                        <div class="info-value" data-field="nombreCompleto" th:text="${userProfile.nombre + ' ' + userProfile.apellido}">Nombre Apellido</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-at"></i>
-                            Usuario
-                        </div>
-                        <div class="info-value" th:text="${user.username}">usuario123</div>
+                        <div class="info-label"><i class="fas fa-at"></i> Usuario</div>
+                        <div class="info-value" data-field="username" th:text="${userProfile.username}">usuario123</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-id-card"></i>
-                            Tipo de Documento
-                        </div>
-                        <div class="info-value" th:text="${user.tipoDocumento}">CC</div>
+                        <div class="info-label"><i class="fas fa-id-card"></i> Tipo de Documento</div>
+                        <div class="info-value" data-field="tipoDocumento" th:text="${userProfile.tipoDocumento}">CC</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-hashtag"></i>
-                            Número de Documento
-                        </div>
-                        <div class="info-value" th:text="${user.numeroDocumento}">1234567890</div>
+                        <div class="info-label"><i class="fas fa-hashtag"></i> Número de Documento</div>
+                        <div class="info-value" data-field="numeroDocumento" th:text="${userProfile.numeroDocumento}">1234567890</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-phone"></i>
-                            Teléfono
-                        </div>
-                        <div class="info-value" th:text="${user.telefono}">+57 300 123 4567</div>
+                        <div class="info-label"><i class="fas fa-phone"></i> Teléfono</div>
+                        <div class="info-value" data-field="telefono" th:text="${userProfile.telefono}">+57 300 123 4567</div>
                     </div>
 
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-calendar-alt"></i>
-                            Miembro desde
-                        </div>
-                        <div class="info-value" th:text="${user.fechaRegistro != null ? #temporals.format(user.fechaRegistro, 'dd/MM/yyyy') : 'N/A'}">01/01/2024</div>
-                    </div>
+                    <!-- <div class="info-item">
+                        <div class="info-label"><i class="fas fa-calendar-alt"></i> Miembro desde</div>
+                        <div class="info-value" data-field="fechaRegistro" th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</div>
+                    </div> -->
                 </div>
             </div>
 
@@ -509,13 +494,13 @@
             <div class="actions-card">
                 <h3 class="actions-title">Acciones Rápidas</h3>
                 <div class="action-buttons">
-                    <a href="#" class="btn-action btn-edit" onclick="showEditModal(); return false;">
+                    <a href="javascript:void(0)" class="btn-action btn-edit" onclick="showEditModal()">
                         <span>
                             <i class="fas fa-edit"></i> Editar mi información
                         </span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
-                    <a href="#" class="btn-action btn-delete" onclick="showDeleteModal(); return false;">
+                    <a href="javascript:void(0)" class="btn-action btn-delete" onclick="showDeleteModal()">
                         <span>
                             <i class="fas fa-trash-alt"></i> Eliminar mi cuenta
                         </span>
@@ -526,7 +511,7 @@
         </main>
     </div>
 
-    <script>
+<!--     <script>
         function showPasswordModal() {
             alert('Aquí se abrirá el modal para cambiar contraseña');
             // Implementar modal o redirección
@@ -543,7 +528,209 @@
                 alert('Cuenta eliminada (implementar lógica)');
             }
         }
-    </script>
+    </script> -->
+
+    <!-- Modal Editar Perfil -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-danger">
+      <div class="modal-header border-danger">
+        <h5 class="modal-title">Editar Perfil</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="editProfileForm">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" id="apellido" name="apellido" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
+            <input type="text" id="tipoDocumento" name="tipoDocumento" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="numeroDocumento" class="form-label">Número de Documento</label>
+            <input type="text" id="numeroDocumento" name="numeroDocumento" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer border-danger">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cambiar Contraseña -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-danger">
+      <div class="modal-header border-danger">
+        <h5 class="modal-title">Cambiar Contraseña</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="changePasswordForm">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Contraseña actual</label>
+            <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nueva contraseña</label>
+            <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer border-danger">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Cambiar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   👤 Cargar los datos del usuario al abrir la página
+============================================================ */
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // 🔧 Inicializar modales Bootstrap DESPUÉS de que el DOM esté listo
+  const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+  const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+
+  // 🧩 Hacer las funciones globales para que puedan ser llamadas desde onclick
+  window.showEditModal = function() {
+    editProfileModal.show();
+  };
+
+  window.showPasswordModal = function() {
+    changePasswordModal.show();
+  };
+
+  // ☠️ Eliminar (desactivar) cuenta
+  window.showDeleteModal = function() {
+    if (confirm('¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
+      fetch('/users/me/deactivate', { method: 'PATCH' })
+        .then(response => {
+          if (response.ok) {
+            document.cookie = "token=; Max-Age=0; path=/;";
+            document.cookie = "JSESSIONID=; Max-Age=0; path=/;";
+            window.location.href = '/';
+          } else {
+            alert('Error al eliminar la cuenta.');
+          }
+        })
+        .catch(() => alert('Error al intentar eliminar la cuenta.'));
+    }
+  };
+
+  // ✏️ Editar perfil
+  document.getElementById('editProfileForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const data = {
+      nombre: e.target.nombre.value,
+      apellido: e.target.apellido.value,
+      tipoDocumento: e.target.tipoDocumento.value,
+      numeroDocumento: e.target.numeroDocumento.value,
+      telefono: e.target.telefono.value,
+      role: "USER"
+    };
+
+    fetch('/users/me', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(r => {
+      if (r.ok) {
+        alert('✅ Perfil actualizado correctamente.');
+        editProfileModal.hide();
+        location.reload();
+      } else {
+        r.json().then(err => alert(err.message || 'Error al actualizar perfil.'));
+      }
+    })
+    .catch(() => alert('Error al conectar con el servidor.'));
+  });
+
+  // 🔐 Cambiar contraseña
+  document.getElementById('changePasswordForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const body = {
+      currentPassword: e.target.currentPassword.value,
+      newPassword: e.target.newPassword.value,
+      confirmPassword: e.target.confirmPassword.value
+    };
+
+    fetch('/users/me/change-password', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    .then(r => {
+      if (r.ok) {
+        alert('🔒 Contraseña cambiada con éxito.');
+        changePasswordModal.hide();
+        e.target.reset();
+      } else {
+        r.json().then(err => alert(err.message || 'Error al cambiar contraseña.'));
+      }
+    })
+    .catch(() => alert('Error al conectar con el servidor.'));
+  });
+
+  // 📥 Cargar datos en el modal de edición (al abrir)
+  document.getElementById('editProfileModal').addEventListener('show.bs.modal', () => {
+    fetch('/users/me')
+      .then(r => {
+        if (!r.ok) throw new Error('Error al obtener datos.');
+        return r.json();
+      })
+      .then(user => {
+        document.getElementById('nombre').value = user.nombre || '';
+        document.getElementById('apellido').value = user.apellido || '';
+        document.getElementById('tipoDocumento').value = user.tipoDocumento || '';
+        document.getElementById('numeroDocumento').value = user.numeroDocumento || '';
+        document.getElementById('telefono').value = user.telefono || '';
+      })
+      .catch(() => alert('No se pudieron cargar los datos del perfil.'));
+  });
+
+  // 🧠 Cargar información del usuario en la página
+  fetch("/users/me")
+    .then(res => {
+      if (!res.ok) throw new Error("Error al obtener usuario");
+      return res.json();
+    })
+    .then(user => {
+      document.querySelector(".user-fullname").textContent = `${user.nombre} ${user.apellido}`;
+      document.querySelector(".user-username").textContent = `@${userProfile.username}`;
+
+      const infoFields = document.querySelectorAll(".info-value");
+      infoFields.forEach(field => {
+        const fieldName = field.getAttribute("data-field");
+        if (user[fieldName]) field.textContent = user[fieldName];
+      });
+    })
+    /* .catch(() => alert("No se pudo cargar la información del usuario.")); */
+});
+</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

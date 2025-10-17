@@ -4,6 +4,7 @@ import io.bootify.reserva.domain.Role;
 import io.bootify.reserva.domain.Status;
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.events.BeforeDeleteUser;
+import io.bootify.reserva.model.ChangePasswordRequest;
 import io.bootify.reserva.model.UserDTO;
 import io.bootify.reserva.model.UserRegisterDTO;
 import io.bootify.reserva.repos.UserRepository;
@@ -59,8 +60,8 @@ public class UserService {
         return userRepository.save(user).getIdUser();
     }
 
-    public void update(final Long idUser, final UserDTO userDTO) {
-        final User user = userRepository.findById(idUser)
+    public void updateUser(final Long idUser, final UserDTO userDTO) {
+        User user = userRepository.findById(idUser)
                 .orElseThrow(NotFoundException::new);
         mapToEntityUser(userDTO, user);
         userRepository.save(user);
@@ -128,6 +129,51 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         user.setStatus(Status.INACTIVO);
+        userRepository.save(user);
+        if (user.getStatus() == Status.INACTIVO) return;
+
+    }
+
+    public void changePassword(UserDetails userDetails, String currentPassword, String newPassword, String confirmPassword) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+        .orElseThrow(() -> new IllegalArgumentException("El usuario no fue encontrado"));
+
+        if(!passwordEncoder.matches(currentPassword, user.getPassword())){
+            throw new IllegalArgumentException("La contraseña actual es incorrecta");
+        }
+
+        if(!newPassword.equals(confirmPassword)){
+            throw new IllegalArgumentException("La nueva contraseña y la confirmación no coinciden");
+        }
+
+        if(passwordEncoder.matches(newPassword, user.getPassword())){
+            throw new IllegalArgumentException("La nueva contraseña debe ser diferente a la actual");
+
+        }
+
+            // 4️⃣ Validaciones de seguridad básica
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("La nueva contraseña debe tener al menos 8 caracteres");
+        }
+
+        if (!newPassword.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("La nueva contraseña debe contener al menos una letra mayúscula");
+        }
+
+        if (!newPassword.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("La nueva contraseña debe contener al menos una letra minúscula");
+        }
+
+        if (!newPassword.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("La nueva contraseña debe contener al menos un número");
+        }
+
+        if (!newPassword.matches(".*[!@#$%^&*()_+\\-={}:;\"'<>,.?/].*")) {
+            throw new IllegalArgumentException("La nueva contraseña debe contener al menos un carácter especial");
+        }
+
+        // Finalmmente, se cifra la contraseña y se guarda.
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
