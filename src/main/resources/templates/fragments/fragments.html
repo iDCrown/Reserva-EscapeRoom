@@ -4,7 +4,6 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100&icon_names=favorite,home,search,settings" rel="stylesheet" />
 </head>
 <body>
     <!-- Los fragments son componentes que usaremos para incluir en cada pagina y evitar escribir codigo repetitivo -->
@@ -40,55 +39,28 @@
     <!-- Footer fragment -->
 
     <footer class="bg-black text-white" th:fragment="footer">
-        <div class="container px-4">
+        <div class="container pt-5 px-4">
             <div class="row">
                 <div class="col-6 col-lg-4">
-                    <h3  class="pt-3 fw-bold">EscapeRoom</h3>
-                    <p>Carrera inventada # quiensabe-quizás</p>
-                    <p>+573028283845</p>
-                    <p>+573000000001</p>
+                    <h2>EscapeRoom</h2>
+                    <p>📍 Calle 45 #18-27, Bogotá, Colombia</p>
+                    <p>📞 +57 302 828 3845</p>
+                    <p>📞 +57 300 000 0001</p>
                 </div>
-                <div class="col ">
-                    <h4 class="pt-3 fw-bold">Menú</h4>
-
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                    </ul>
-                    
-                </div>
-                <div class="col">
-                    <h4 class="pt-3 fw-bold">Sedes</h4>
-                    <ul>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                    </ul> 
-                </div> 
                 <div class="col"> 
-                    <h4 class="pt-3 fw-bold">Horarios</h4> 
-                    <ul>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                        <li><a href="#" class="text-decoration-none text-white">Link</a></li>
-                    </ul>
+                    <h2 class="pt-3 fw-bold">Horarios</h2> 
+                    <p>Lunes a Viernes: 10:00 a.m. – 5:00 p.m.</p>
+                    <p>Sábados, Domingos y Festivos: 10:00 a.m. – 4:00 p.m.</p>
                 </div>
                 <div class="col-6 col-lg-3 text-lg-end">
-                    <h4 class="pt-3 fw-bold">Redes Sociales</h4>
+                    <h2 class="pt-3 fw-bold">Redes Sociales</h2>
                     <!-- Iconos redes sociales -->
-                     <div>
-                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-instagram fs-2 me-3"></i></a>
-                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-facebook fs-2 me-3"></i></a>
-                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-twitter fs-2 me-3"></i></a>
-                        <a href="#" class="text-decoration-none text-white"><i class="bi bi-linkedin fs-2"></i></a>
-                     </div>
+                    <div class="social-icons" style="display: flex; gap: 10px; margin-top: 5px; justify-content: flex-end;">
+                        <span class="material-symbols-outlined"> </span>
+                        <span class="material-symbols-outlined">photo_camera</span>
+                        <span class="material-symbols-outlined">smart_display</span>
+                        <span class="material-symbols-outlined">alternate_email</span>
+                    </div>
                 </div>
             </div>
         </div>
