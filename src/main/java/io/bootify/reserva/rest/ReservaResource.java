@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import io.bootify.reserva.repos.UserRepository;
 
 
-
 @Controller
 @RequestMapping("/api/reservas")
 public class ReservaResource {
