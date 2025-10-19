@@ -1,5 +1,6 @@
 package io.bootify.reserva.model;
 
+import io.bootify.reserva.domain.StatusReserva;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,5 +27,11 @@ public class ReservaDTO {
     private Long user;
 
     private Long amenity;
+    //campo adicional para poder mostrar el nombre del amenity(sala) en la vista de mis reservas
+    private String amenityNombre;
+    //campo adicional para poder mostrar el estado de la reserva en la vista de mis reservas
+    private StatusReserva statusReserva;
+
+
 
 }

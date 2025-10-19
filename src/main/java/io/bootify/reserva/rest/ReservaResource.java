@@ -2,7 +2,9 @@ package io.bootify.reserva.rest;
 
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.model.ReservaDTO;
+import io.bootify.reserva.model.UserDTO;
 import io.bootify.reserva.service.ReservaService;
+import io.bootify.reserva.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,13 +18,17 @@ import java.time.LocalTime;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,10 +43,12 @@ public class ReservaResource {
 
     private final ReservaService reservaService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ReservaResource(final ReservaService reservaService, final UserRepository userRepository) {
+    public ReservaResource(final ReservaService reservaService, final UserRepository userRepository, final UserService userService) {
         this.reservaService = reservaService;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -100,6 +108,27 @@ public class ReservaResource {
     public ResponseEntity<Void> deleteReserva(
             @PathVariable(name = "idReserva") final Long idReserva) {
         reservaService.delete(idReserva);
+        return ResponseEntity.noContent().build();
+    }
+
+    //Nuevo endpoint para obtener las reservas del usuario autenticado dentro de la misma vista de myAccount.html
+    @GetMapping("/mis-reservas")
+    public ResponseEntity<List<ReservaDTO>> getMisReservas(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        UserDTO current = userService.getCurrentUser(userDetails);
+        List<ReservaDTO> list = reservaService.findAllByUserId(current.getIdUser());
+        return ResponseEntity.ok(list);
+    }
+
+    //Nuevo endpoint para actualizar el estado de una reserva
+    @PatchMapping("/{idReserva}/status")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long idReserva,
+                                             @RequestBody Map<String,String> body,
+                                             @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        String username = userDetails.getUsername();
+        String newStatus = body.get("statusReserva");
+        reservaService.updateStatus(idReserva, newStatus, username);
         return ResponseEntity.noContent().build();
     }
 
