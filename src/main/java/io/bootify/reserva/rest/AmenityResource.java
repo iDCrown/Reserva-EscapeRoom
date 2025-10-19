@@ -36,7 +36,10 @@ public class AmenityResource {
     @GetMapping("/{idAmenity}")
     public ResponseEntity<AmenityDTO> getAmenity(
             @PathVariable(name = "idAmenity") final Long idAmenity) {
+                //mapea el id en reservaService.setAmenity(id)
+                
         return ResponseEntity.ok(amenityService.get(idAmenity));
+
     }
 
     @PostMapping("/createAmenity")

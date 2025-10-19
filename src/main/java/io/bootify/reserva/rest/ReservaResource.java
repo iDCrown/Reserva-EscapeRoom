@@ -63,7 +63,7 @@ public class ReservaResource {
     }
 
     @PostMapping("/createReserva")
-    public String createReserva(@ModelAttribute("reserva") @Valid final ReservaDTO reservaDTO) {
+    public String createReserva(@ModelAttribute("reserva") @Valid final ReservaDTO reservaDT, BindingResult result) {
 
         //Obtener el Id del usuario autenticado
 
@@ -83,6 +83,29 @@ public class ReservaResource {
             final LocalTime horaFin = horaInicio.plusHours(1);
             reservaDTO.setHoraFin(horaFin);
         }
+
+
+        //validaciones
+        if (reserva.getFechaReserva().isBefore(hoy)) {
+        result.rejectValue("fechaReserva", "error.fechaReserva",
+                "No puedes reservar fechas pasadas.");
+            }
+
+            if (reserva.getFechaReserva().isAfter(max)) {
+                result.rejectValue("fechaReserva", "error.fechaReserva",
+                        "La fecha de reserva no puede ser mayor a 2 meses desde hoy.");
+            }
+
+            // Verificar capacidad
+            int capacidad = reservaService.obtenerCapacidadAmenity(reserva.getIdAmenity());
+            if (reserva.getNumeroPersonas() > capacidad) {
+                result.rejectValue("numeroPersonas", "error.numeroPersonas",
+                        "El número de participantes excede la capacidad máxima (" + capacidad + ").");
+            }
+
+            if (result.hasErrors()) {
+                return "reserva-form";
+            }
 
         reservaService.create(reservaDTO);
         return "redirect:/homePage";
