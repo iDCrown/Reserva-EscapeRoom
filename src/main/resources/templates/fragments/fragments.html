@@ -24,7 +24,7 @@
                     <button class="btn btn-danger btn-logout">Inicio sesión</button>
                 </a>
                 <form class="formButtons" action="/logout" method="post" sec:authorize="isAuthenticated()">
-                    <span class="user-name">Bienvenido, <strong th:text="${userProfile}">Usuario</strong>
+                    <span class="user-name">Bienvenido, <strong th:text="${user}">Usuario</strong>
                     </span>
                     <a th:href="@{/miPerfil}">
                         <span class="btn btn-logout">Mi perfil</span>
