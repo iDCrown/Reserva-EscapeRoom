@@ -33,9 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.bootify.reserva.repos.UserRepository;
 import org.springframework.validation.BindingResult;
-import jakarta.validation.Valid;
-imporrt io.sp
-
 
 @Controller
 @RequestMapping("/api/reservas")
