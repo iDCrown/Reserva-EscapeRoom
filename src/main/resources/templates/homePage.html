@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"/>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
 
 </head>
 <body>
@@ -159,7 +160,7 @@
         font-size: 0.85rem;
     }
         /* Header */
-        .header {
+       /*  .header {
             background: rgba(15, 10, 20, 0.9);
             backdrop-filter: blur(10px);
             border-bottom: 2px solid rgba(139, 0, 0, 0.3);
@@ -234,7 +235,7 @@
             background: rgba(139, 0, 0, 0.5);
             color: #ffffff;
             box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
-        }
+        } */
         
 
     </style>
@@ -268,7 +269,9 @@
                                             <div class="title-area">
                                                 <h3 th:text="${amenity.nombre}"></h3>
                                             </div>
-                                            <button class="reserve-btn">RESERVAR</button>
+                                            <a th:href="@{/amenities/view/{id}(id=${amenity.idAmenity})}">
+                                                <button class="reserve-btn">RESERVAR</button>
+                                            </a>
                                         </div>
     
                                         <div class="bottom-info">

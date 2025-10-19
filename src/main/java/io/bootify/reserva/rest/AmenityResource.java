@@ -2,12 +2,17 @@ package io.bootify.reserva.rest;
 
 import io.bootify.reserva.model.AmenityDTO;
 import io.bootify.reserva.service.AmenityService;
+import io.bootify.reserva.service.JwtService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,27 +25,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/amenities", produces = MediaType.APPLICATION_JSON_VALUE)
+@AllArgsConstructor
 public class AmenityResource {
 
     private final AmenityService amenityService;
-
-    public AmenityResource(final AmenityService amenityService) {
-        this.amenityService = amenityService;
-    }
+    private final JwtService jwtService;
 
     @GetMapping
     public ResponseEntity<List<AmenityDTO>> getAllAmenities() {
         return ResponseEntity.ok(amenityService.findAll());
     }
 
-    @GetMapping("/{idAmenity}")
-    public ResponseEntity<AmenityDTO> getAmenity(
-            @PathVariable(name = "idAmenity") final Long idAmenity) {
-                //mapea el id en reservaService.setAmenity(id)
-                
-        return ResponseEntity.ok(amenityService.get(idAmenity));
-
+    /* @GetMapping("/{idAmenity}")
+    public String getAmenity(Model model, @CookieValue(value = "token", required = false) String token, Long idAmenity) {
+        if (token != null) {
+        // Decodificar el JWT (usando el servicio)
+        String user = jwtService.getUsernameFromToken(token);
+        model.addAttribute("user", user);
     }
+        model.addAttribute("amenity", amenityService.get(idAmenity));
+
+    }  */
+    
 
     @PostMapping("/createAmenity")
     @ApiResponse(responseCode = "201")

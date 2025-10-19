@@ -1,7 +1,9 @@
 package io.bootify.reserva.rest;
 
 import io.bootify.reserva.domain.User;
+import io.bootify.reserva.model.AmenityDTO;
 import io.bootify.reserva.model.ReservaDTO;
+import io.bootify.reserva.service.AmenityService;
 import io.bootify.reserva.service.ReservaService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.ui.Model;
 
 import java.net.Authenticator;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +32,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import io.bootify.reserva.repos.UserRepository;
-
+import org.springframework.validation.BindingResult;
+import jakarta.validation.Valid;
+imporrt io.sp
 
 
 @Controller
@@ -38,10 +43,14 @@ public class ReservaResource {
 
     private final ReservaService reservaService;
     private final UserRepository userRepository;
+    private final AmenityService amenityService;
+    private final AmenityDTO amenityDTO;
 
-    public ReservaResource(final ReservaService reservaService, final UserRepository userRepository) {
+    public ReservaResource(final ReservaService reservaService, final UserRepository userRepository, final AmenityService amenityService, final AmenityDTO amenityDTO) {
         this.reservaService = reservaService;
         this.userRepository = userRepository;
+        this.amenityService = amenityService;
+        this.amenityDTO = amenityDTO;
     }
 
     @GetMapping
@@ -53,7 +62,7 @@ public class ReservaResource {
     @GetMapping("/verReserva")
     public String reserva(Model model) {
         model.addAttribute("reserva", new ReservaDTO());
-        return "viewAmenity";
+        return "reservaForm";
     }
 
     @GetMapping("/{idReserva}")
@@ -63,7 +72,7 @@ public class ReservaResource {
     }
 
     @PostMapping("/createReserva")
-    public String createReserva(@ModelAttribute("reserva") @Valid final ReservaDTO reservaDT, BindingResult result) {
+    public String createReserva(@ModelAttribute("reserva") @Valid final ReservaDTO reservaDTO, BindingResult result) {
 
         //Obtener el Id del usuario autenticado
 
@@ -84,21 +93,27 @@ public class ReservaResource {
             reservaDTO.setHoraFin(horaFin);
         }
 
+        
 
         //validaciones
-        if (reserva.getFechaReserva().isBefore(hoy)) {
+
+        LocalDate hoy = LocalDate.now();
+        LocalDate max = hoy.plusMonths(2);
+
+        if (reservaDTO.getFechaReserva().isBefore(hoy)) {
         result.rejectValue("fechaReserva", "error.fechaReserva",
                 "No puedes reservar fechas pasadas.");
             }
 
-            if (reserva.getFechaReserva().isAfter(max)) {
+            if (reservaDTO.getFechaReserva().isAfter(max)) {
                 result.rejectValue("fechaReserva", "error.fechaReserva",
                         "La fecha de reserva no puede ser mayor a 2 meses desde hoy.");
             }
 
             // Verificar capacidad
-            int capacidad = reservaService.obtenerCapacidadAmenity(reserva.getIdAmenity());
-            if (reserva.getNumeroPersonas() > capacidad) {
+            AmenityDTO amenityDTO = amenityService.get(reservaDTO.getAmenity());
+            int capacidad = amenityDTO.getCapacidad();
+            if (reservaDTO.getNumeroPersonas() > capacidad) {
                 result.rejectValue("numeroPersonas", "error.numeroPersonas",
                         "El número de participantes excede la capacidad máxima (" + capacidad + ").");
             }
