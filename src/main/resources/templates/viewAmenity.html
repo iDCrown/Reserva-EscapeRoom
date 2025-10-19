@@ -6,6 +6,7 @@
     <title>Detalle y Reserva - Escape Room</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css}">
     <style>
         * {
             margin: 0;
@@ -559,6 +560,11 @@
     </style>
 </head>
 <body>
+
+    <!-- Header -->
+     <div th:replace="~{fragments/fragments :: header}"></div>
+
+
     <!-- Fondo con niebla -->
     <div class="video-background">
         <div class="fog">
@@ -591,13 +597,10 @@
                      class="amenity-image"
                      onerror="this.src='https://via.placeholder.com/600x300/1a0a0a/ff4444?text=Escape+Room'">
 
-                <h1 class="amenity-title" th:text="${amenity.nombre}">Fin del Juego</h1>
+                <h1 class="amenity-title" th:text="${amenity.nombre}"></h1>
                 
                 <p class="amenity-description" th:text="${amenity.descripcion}">
-                    Acabo de despertar en un lugar totalmente desconocido. No recuerdo cómo llegué aquí, 
-                    estaba en la patrulla y de repente, todo se desvaneció. Ahora, la historia de estos 
-                    policías. Se enfrentarán a un maleante perverso y ahora tendrán literalmente que 
-                    jugar por sus vidas.
+                    
                 </p>
 
                 <div class="amenity-details">
@@ -607,7 +610,7 @@
                         </div>
                         <div class="detail-content">
                             <div class="detail-label">Capacidad</div>
-                            <div class="detail-value" th:text="${amenity.capacidad} + ' personas'">2-6 personas</div>
+                            <div class="detail-value" th:text="'2 - ' + ${amenity.capacidad} + ' personas'"></div>
                         </div>
                     </div>
 
@@ -730,6 +733,9 @@
         <i class="fas fa-exclamation-triangle"></i>
         <span>¿Estás listo para enfrentar tus miedos?</span>
     </div>
+
+    <!-- Fragmento Footer -->
+    <div th:replace="~{fragments/fragments :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

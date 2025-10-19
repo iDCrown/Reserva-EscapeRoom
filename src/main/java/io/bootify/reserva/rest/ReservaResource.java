@@ -52,7 +52,7 @@ public class ReservaResource {
     @GetMapping("/verReserva")
     public String reserva(Model model) {
         model.addAttribute("reserva", new ReservaDTO());
-        return "viewAmenity";
+        return "reservaForm";
     }
 
     @GetMapping("/{idReserva}")
