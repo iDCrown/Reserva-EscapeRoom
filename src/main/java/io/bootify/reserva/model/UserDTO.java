@@ -3,6 +3,7 @@ package io.bootify.reserva.model;
 import java.io.ObjectInputFilter.Status;
 
 import io.bootify.reserva.domain.Role;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,10 +30,9 @@ public class UserDTO {
     @Size(max = 255)
     private String telefono;
 
-    @Size(max = 6)
+    @NotNull
     private Role role;
 
-    @Size(max = 255)
     private Status status;
 
 }
