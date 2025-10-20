@@ -33,7 +33,7 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(authRequest -> 
                 authRequest
-                    .requestMatchers("/auth/**", "/homePage", "/api/reservas/**", "/logout").permitAll()
+                    .requestMatchers("/auth/**", "/homePage", "/api/reservas/**", "/logout", "/css/**").permitAll()
                     .requestMatchers("/miPerfil", "api/reservas/createReserva").authenticated()
                     .anyRequest().authenticated()
                     )
