@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import io.bootify.reserva.Auth.AuthResponse;
 import io.bootify.reserva.Auth.LoginRequest;
 import io.bootify.reserva.domain.Role;
+import io.bootify.reserva.domain.Status;
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.repos.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,23 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        UserDetails user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token = jwtService.getToken(user);
-        return AuthResponse.builder().token(token).build();
+        // Buscar usuario
+    User user = userRepository.findByUsername(request.getUsername())
+            .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos."));
+
+    // Validar si está inactivo
+    if (user.getStatus() == Status.INACTIVO) {
+        throw new RuntimeException("Usuario no existe o está inactivo.");
+    }
+
+    // Autenticar usuario
+    authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+    );
+
+    // Generar token JWT
+    String token = jwtService.getToken(user);
+    return AuthResponse.builder().token(token).build();
     }
 
     public AuthResponse register(RegisterRequest request) {

@@ -414,7 +414,7 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="user-fullname" th:text="${userProfile.nombre + ' ' + userProfile.apellido}"></div>
-                <div class="user-username" th:text="'@' + ${userProfile.username}"></div>
+                <!-- <div class="user-username" th:text="${user}"></div> -->
             </div>
 
             <nav>
@@ -486,10 +486,10 @@
                             <div class="info-value" data-field="telefono" th:text="${userProfile.telefono}">+57 300 123 4567</div>
                         </div>
 
-                        <!-- <div class="info-item">
-                            <div class="info-label"><i class="fas fa-calendar-alt"></i> Miembro desde</div>
-                            <div class="info-value" data-field="fechaRegistro" th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</div>
-                        </div> -->
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-envelope"></i> Correo Electrónico</div>
+                            <div class="info-value" data-field="correo" th:text="${userProfile.correo}">correo@ejemplo.com</div>
+                        </div>
                     </div>
                 </div>
 
@@ -568,7 +568,12 @@
           </div>
           <div class="mb-3">
             <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
-            <input type="text" id="tipoDocumento" name="tipoDocumento" class="form-control" required>
+            <select id="tipoDocumento" name="tipoDocumento" class="form-control" required>
+              <option value="" disabled selected>Selecciona un tipo</option>
+              <option value="CC">Cédula de Ciudadanía (CC)</option>
+              <option value="CE">Cédula de Extranjería (CE)</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
           </div>
           <div class="mb-3">
             <label for="numeroDocumento" class="form-label">Número de Documento</label>
@@ -577,6 +582,10 @@
           <div class="mb-3">
             <label for="telefono" class="form-label">Teléfono</label>
             <input type="text" id="telefono" name="telefono" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo Eléctronico</label>
+            <input type="text" id="correo" name="correo" class="form-control" required>
           </div>
         </div>
         <div class="modal-footer border-danger">
@@ -788,7 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (response.ok) {
             document.cookie = "token=; Max-Age=0; path=/;";
             document.cookie = "JSESSIONID=; Max-Age=0; path=/;";
-            window.location.href = '/';
+            window.location.href = '/homePage';
           } else {
             alert('Error al eliminar la cuenta.');
           }
@@ -809,6 +818,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tipoDocumento: e.target.tipoDocumento.value,
         numeroDocumento: e.target.numeroDocumento.value,
         telefono: e.target.telefono.value,
+        correo: e.target.correo.value,
         role: "USER"
       };
 
@@ -875,6 +885,7 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById('tipoDocumento').value = user.tipoDocumento || '';
           document.getElementById('numeroDocumento').value = user.numeroDocumento || '';
           document.getElementById('telefono').value = user.telefono || '';
+          document.getElementById('correo').value = user.correo || '';
         })
         .catch(() => alert('No se pudieron cargar los datos del perfil.'));
     });

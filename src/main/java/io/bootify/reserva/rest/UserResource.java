@@ -6,9 +6,11 @@ import io.bootify.reserva.model.UserDTO;
 import io.bootify.reserva.model.UserRegisterDTO;
 import io.bootify.reserva.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import jakarta.servlet.http.Cookie;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.ui.Model;
-
+import org.springframework.validation.BindingResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,7 +59,13 @@ public class UserResource {
 
     @PutMapping("/{idUser}")
     public ResponseEntity<Long> updateUser(@PathVariable(name = "idUser") final Long idUser,
-        @RequestBody @Valid final UserDTO userDTO) {
+        @Valid @RequestBody final UserDTO userDTO,
+        BindingResult result) {
+
+            if (result.hasErrors()) {
+                return ResponseEntity.badRequest().body(null);
+            }
+
         userService.updateUser(idUser, userDTO);
         return ResponseEntity.ok(idUser);
     }
@@ -90,9 +98,17 @@ public class UserResource {
      @PutMapping("/me")
      public ResponseEntity<Long> updateCurrentUser(
         @AuthenticationPrincipal UserDetails userDetails,
-        @RequestBody final UserDTO userDTO) {
+        @Valid @RequestBody UserDTO userDTO,
+        BindingResult result) {
+            if (result.hasErrors()) {
+                // Devuelve los errores al frontend
+                return ResponseEntity.badRequest().body(null);
+            }
 
-    UserDTO currentUser = userService.getCurrentUser(userDetails);
+            UserDTO currentUser = userService.getCurrentUser(userDetails);
+            if (userDTO.getRole() == null) {
+                userDTO.setRole(currentUser.getRole());
+            }
 
     // Establece el rol actual si no se envía desde el frontend
     if (userDTO.getRole() == null) {
@@ -104,10 +120,26 @@ public class UserResource {
 }
 
      @PatchMapping("/me/deactivate")
-     public ResponseEntity<Void> deactivateCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+     public ResponseEntity<Void> deactivateCurrentUser(@AuthenticationPrincipal UserDetails userDetails,
+        HttpServletResponse response) {
          UserDTO currentUser = userService.getCurrentUser(userDetails);
          userService.deactivateUser(currentUser.getIdUser());
-         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+         // 🔥 Invalida el token y la sesión (desde el backend)
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(0); // expira inmediatamente
+        response.addCookie(tokenCookie);
+
+        Cookie sessionCookie = new Cookie("JSESSIONID", null);
+        sessionCookie.setHttpOnly(true);
+        sessionCookie.setPath("/");
+        sessionCookie.setMaxAge(0);
+        response.addCookie(sessionCookie);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
      }
 
      @PatchMapping("/me/change-password")

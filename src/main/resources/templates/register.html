@@ -369,6 +369,46 @@
             transform: scale(1.1);
         }
 
+        /* Select personalizado */
+        .form-select-custom {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            padding-right: 45px !important; /* Espacio para la flecha */
+        }
+
+        .form-select-custom option {
+            background: #1a0a0a;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .form-select-custom option:hover {
+            background: rgba(139, 0, 0, 0.3);
+        }
+
+        /* Flecha personalizada del select */
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            color: #666666;
+            font-size: 0.9rem;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .form-select-custom:focus ~ .select-arrow {
+            color: #ff4444;
+            transform: rotate(180deg);
+        }
+
+        /* Ocultar la flecha nativa en Firefox */
+        .form-select-custom::-ms-expand {
+            display: none;
+        }
+
         /* Errores de validación */
         .text-danger {
             color: #ff6666 !important;
@@ -585,8 +625,7 @@
                                        id="nombre" 
                                        class="form-input" 
                                        placeholder="Tu nombre" 
-                                       required 
-                                       minlength="2"/>
+                                />
                                 <i class="fas fa-user input-icon"></i>
                             </div>
                             <div class="text-danger" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
@@ -600,8 +639,7 @@
                                        id="apellido" 
                                        class="form-input" 
                                        placeholder="Tu apellido" 
-                                       required 
-                                       minlength="2"/>
+                                />
                                 <i class="fas fa-user input-icon"></i>
                             </div>
                             <div class="text-danger" th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}"></div>
@@ -613,13 +651,16 @@
                         <div class="col-md-6 form-group">
                             <label class="form-label" for="tipoDocumento">Tipo de documento</label>
                             <div class="input-group-custom">
-                                <input type="text" 
-                                       th:field="*{tipoDocumento}" 
-                                       id="tipoDocumento" 
-                                       class="form-input" 
-                                       placeholder="CC / CE / Pasaporte" 
-                                       required/>
+                                <select th:field="*{tipoDocumento}" 
+                                        id="tipoDocumento" 
+                                        class="form-input form-select-custom">
+                                    <option value=""selected>Selecciona un tipo</option>
+                                    <option value="CC">Cédula de Ciudadanía (CC)</option>
+                                    <option value="CE">Cédula de Extranjería (CE)</option>
+                                    <option value="PASAPORTE">Pasaporte</option>
+                                </select>
                                 <i class="fas fa-id-card input-icon"></i>
+                                <i class="fas fa-chevron-down select-arrow"></i>
                             </div>
                             <div class="text-danger" th:if="${#fields.hasErrors('tipoDocumento')}" th:errors="*{tipoDocumento}"></div>
                         </div>
@@ -632,28 +673,45 @@
                                        id="numeroDocumento" 
                                        class="form-input" 
                                        placeholder="Número" 
-                                       required 
-                                       pattern="[0-9]{6,20}"/>
+                                />
                                 <i class="fas fa-hashtag input-icon"></i>
                             </div>
                             <div class="text-danger" th:if="${#fields.hasErrors('numeroDocumento')}" th:errors="*{numeroDocumento}"></div>
                         </div>
                     </div>
 
-                    <!-- Teléfono -->
-                    <div class="form-group">
-                        <label class="form-label" for="telefono">Teléfono</label>
-                        <div class="input-group-custom">
-                            <input type="tel" 
-                                   th:field="*{telefono}" 
-                                   id="telefono" 
-                                   class="form-input" 
-                                   placeholder="+573001234567" 
-                                   pattern="^\+?[0-9]{7,15}$"/>
-                            <i class="fas fa-phone input-icon"></i>
+                    <div class="row">
+                        <!-- Correo Eléctronico -->
+                        <div class="col-md-6 form-group">
+                            <label class="form-label" for="correo">Correo Eléctronico</label>
+                            <div class="input-group-custom">
+                                <input type="email" 
+                                    th:field="*{correo}" 
+                                    id="correo" 
+                                    class="form-input" 
+                                    placeholder="Email" 
+                                />
+                                <i class="fas fa-envelope input-icon"></i>
+                            </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></div>
                         </div>
-                        <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                        
+                        <!-- Teléfono -->
+                        <div class="form-group col-md-6">
+                            <label class="form-label" for="telefono">Teléfono</label>
+                            <div class="input-group-custom">
+                                <input type="tel" 
+                                    th:field="*{telefono}" 
+                                    id="telefono" 
+                                    class="form-input" 
+                                    placeholder="+573001234567"
+                                />
+                                <i class="fas fa-phone input-icon"></i>
+                            </div>
+                            <div class="text-danger" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+                        </div>
                     </div>
+                    
 
                     <!-- Usuario -->
                     <div class="form-group">
@@ -664,8 +722,7 @@
                                    id="username" 
                                    class="form-input" 
                                    placeholder="usuario" 
-                                   required 
-                                   minlength="3"/>
+                            />
                             <i class="fas fa-user-circle input-icon"></i>
                         </div>
                         <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
@@ -680,8 +737,7 @@
                                    id="password" 
                                    class="form-input" 
                                    placeholder="••••••••" 
-                                   required 
-                                   minlength="6"/>
+                            />
                             <i class="fas fa-lock input-icon"></i>
                             <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
                         </div>

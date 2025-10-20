@@ -20,7 +20,7 @@
                 </div>
                 <a id="btnLogin"
                     sec:authorize="!isAuthenticated()"
-                    th:href="@{/auth/login}">
+                    th:href="@{/auth/login}" class="text-decoration: none">
                     <button class="btn btn-danger btn-logout">Inicio sesión</button>
                 </a>
                 <form class="formButtons" action="/logout" method="post" sec:authorize="isAuthenticated()">
