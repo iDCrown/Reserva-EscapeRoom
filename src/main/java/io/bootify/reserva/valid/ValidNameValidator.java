@@ -9,13 +9,33 @@ public class ValidNameValidator implements ConstraintValidator<ValidName, String
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) return true;
 
-        // ❌ Rechaza cosas como "ppp", "aaa", "xxxx"
+        // Solo letras y espacios
+        if (!value.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$")) return false;
+
+        // No permitir repeticiones de letras seguidas (ej: ppp)
         if (value.matches("^(.)\\1{2,}$")) return false;
 
-        // ❌ Rechaza nombres repetidos (ej: nombre y apellido iguales)
-        // (este se valida en el controller usando ambos campos juntos)
+        // No permitir nombres muy cortos
+        if (value.trim().length() < 2) return false;
 
-        // ✅ Debe contener solo letras y espacios
-        return value.matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$");
+        // No permitir más de 3 palabras
+        String[] words = value.trim().split("\\s+");
+        if (words.length > 3) return false;
+
+        // Evitar repeticiones de palabras (ej: "Pi Pi" o "Ca Ca")
+        for (int i = 1; i < words.length; i++) {
+            if (words[i].equalsIgnoreCase(words[i - 1])) {
+                return false;
+            }
+        }
+
+        // Evitar palabras de una sola letra (ej: "A B")
+        for (String w : words) {
+            if (w.length() == 1) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

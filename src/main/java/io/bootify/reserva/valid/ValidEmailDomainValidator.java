@@ -50,7 +50,6 @@ public class ValidEmailDomainValidator implements ConstraintValidator<ValidEmail
         if (!VALID_TLDS.contains(tld)) return false;
 
         // ✅ Acepta dominio si está en lista o formato razonable
-        return VALID_DOMAINS.contains(domain)
-                || domain.matches("^[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)+$");
+        return VALID_DOMAINS.contains(domain);
     }
 }
