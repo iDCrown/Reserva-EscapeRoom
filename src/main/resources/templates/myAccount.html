@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Escape Room</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a0a 50%, #0f0a15 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        /* Header */
+        /* .header {
+            background: rgba(15, 10, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(139, 0, 0, 0.3);
+            padding: 20px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b0000 0%, #c41e3a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            color: #bbbbbb;
+            font-size: 0.95rem;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: rgba(139, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.5);
+            border-radius: 8px;
+            color: #ff6666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout:hover {
+            background: rgba(139, 0, 0, 0.5);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+        } */
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 30px;
+            display: flex;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            flex: 0 0 280px;
+            background: rgba(15, 10, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #8b0000 0%, #c41e3a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+            border: 3px solid rgba(139, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+        }
+
+        .user-fullname {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .user-username {
+            color: #888888;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            margin-bottom: 10px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #bbbbbb;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .menu-link:hover {
+            background: rgba(139, 0, 0, 0.2);
+            color: #ff4444;
+            transform: translateX(5px);
+        }
+
+        .menu-link.active {
+            background: rgba(139, 0, 0, 0.3);
+            color: #ff4444;
+            border-left: 3px solid #ff4444;
+        }
+
+        .menu-link i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+        }
+
+        .profile-card {
+            background: rgba(15, 10, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(139, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .btn-change-password {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #8b0000 0%, #c41e3a 100%);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-change-password:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(139, 0, 0, 0.5);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .info-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(139, 0, 0, 0.1);
+            border-color: rgba(139, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .info-label {
+            color: #888888;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-label i {
+            color: #ff4444;
+        }
+
+        .info-value {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Actions Card */
+        .actions-card {
+            background: rgba(15, 10, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .actions-title {
+            font-size: 1.3rem;
+            color: #ff4444;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn-action {
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-action i {
+            font-size: 1.2rem;
+        }
+
+        .btn-edit {
+            background: rgba(0, 100, 200, 0.2);
+            border: 1px solid rgba(0, 100, 200, 0.4);
+            color: #6699ff;
+        }
+
+        .btn-edit:hover {
+            background: rgba(0, 100, 200, 0.3);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(0, 100, 200, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(200, 0, 0, 0.2);
+            border: 1px solid rgba(200, 0, 0, 0.4);
+            color: #ff6666;
+        }
+
+        .btn-delete:hover {
+            background: rgba(200, 0, 0, 0.3);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(200, 0, 0, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 0 15px;
+            }
+
+            .profile-card {
+                padding: 25px 20px;
+            }
+
+            .actions-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <!-- <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">🔒</div>
+                <div class="logo-text">
+                    <h1>Escape Room</h1>
+                </div>
+            </div>
+            <div class="user-menu">
+                <span class="user-name">Bienvenido, <strong th:text="${userProfile.nombre}">Usuario</strong></span>
+                <a href="#" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </header> -->
+
+    <!-- fragmento header -->
+    <div th:replace="~{fragments/fragments :: header}"></div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-fullname" th:text="${userProfile.nombre + ' ' + userProfile.apellido}"></div>
+                <div class="user-username" th:text="'@' + ${user}"></div>
+            </div>
+
+            <nav>
+                <ul class="sidebar-menu">
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" id="linkPerfil" class="menu-link active" onclick="showProfile(); return false;">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Mi Perfil</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" id="linkReservas" class="menu-link" onclick="showReservations(); return false;">
+                            <i class="fas fa-calendar-check"></i>
+                            <span>Mis Reservas</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" class="menu-link" onclick="showEditModal()">
+                            <i class="fas fa-edit"></i>
+                            <span>Editar Perfil</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="javascript:void(0)" class="menu-link" onclick="showDeleteModal()">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Eliminar Perfil</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="content-area">
+
+            <div id="profileSection">
+            <!-- Profile Information Card -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Información Personal</h2>
+                        <button type="button" class="btn-change-password" onclick="showPasswordModal()">
+                            <i class="fas fa-key"></i> Cambiar Contraseña
+                        </button>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-user"></i> Nombre Completo</div>
+                            <div class="info-value" data-field="nombreCompleto" th:text="${userProfile.nombre + ' ' + userProfile.apellido}">Nombre Apellido</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-at"></i> Usuario</div>
+                            <div class="info-value" data-field="username" th:text="${userProfile.username}">usuario123</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-id-card"></i> Tipo de Documento</div>
+                            <div class="info-value" data-field="tipoDocumento" th:text="${userProfile.tipoDocumento}">CC</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-hashtag"></i> Número de Documento</div>
+                            <div class="info-value" data-field="numeroDocumento" th:text="${userProfile.numeroDocumento}">1234567890</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-phone"></i> Teléfono</div>
+                            <div class="info-value" data-field="telefono" th:text="${userProfile.telefono}">+57 300 123 4567</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-envelope"></i> Correo Electrónico</div>
+                            <div class="info-value" data-field="correo" th:text="${userProfile.correo}">correo@ejemplo.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Card -->
+                <div class="actions-card">
+                    <h3 class="actions-title">Acciones Rápidas</h3>
+                    <div class="action-buttons">
+                        <a href="javascript:void(0)" class="btn-action btn-edit" onclick="showEditModal()">
+                            <span>
+                                <i class="fas fa-edit"></i> Editar mi información
+                            </span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        <a href="javascript:void(0)" class="btn-action btn-delete" onclick="showDeleteModal()">
+                            <span>
+                                <i class="fas fa-trash-alt"></i> Eliminar mi cuenta
+                            </span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reservations Section (oculta por defecto) -->
+            <div id="reservationsSection" style="display:none;">
+                <div class="profile-card"> 
+                    <div class="card-header">
+                        <h2 class="card-title">Mis Reservas</h2>
+                    </div>
+
+                    <div id="reservasContainer" class="p-2">
+                        <!-- Aquí se inyectará la tabla o el mensaje "No has hecho ninguna reserva." -->
+                        <p class="text-muted">Cargando reservas...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<!--     <script>
+        function showPasswordModal() {
+            alert('Aquí se abrirá el modal para cambiar contraseña');
+            // Implementar modal o redirección
+        }
+
+        function showEditModal() {
+            alert('Aquí se abrirá el formulario para editar perfil');
+            // Implementar modal o redirección
+        }
+
+        function showDeleteModal() {
+            if (confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
+                // Implementar eliminación
+                alert('Cuenta eliminada (implementar lógica)');
+            }
+        }
+    </script> -->
+
+    <!-- Modal Editar Perfil -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-danger">
+      <div class="modal-header border-danger">
+        <h5 class="modal-title">Editar Perfil</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="editProfileForm">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" id="apellido" name="apellido" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
+            <select id="tipoDocumento" name="tipoDocumento" class="form-control" required>
+              <option value="" disabled selected>Selecciona un tipo</option>
+              <option value="CC">Cédula de Ciudadanía (CC)</option>
+              <option value="CE">Cédula de Extranjería (CE)</option>
+              <option value="PASAPORTE">Pasaporte</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="numeroDocumento" class="form-label">Número de Documento</label>
+            <input type="text" id="numeroDocumento" name="numeroDocumento" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="correo" class="form-label">Correo Eléctronico</label>
+            <input type="text" id="correo" name="correo" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer border-danger">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cambiar Contraseña -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-light border-danger">
+      <div class="modal-header border-danger">
+        <h5 class="modal-title">Cambiar Contraseña</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="changePasswordForm">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Contraseña actual</label>
+            <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nueva contraseña</label>
+            <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmar nueva contraseña</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer border-danger">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Cambiar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===========================================================
+   Funciones UI: alternar secciones Perfil <-> Mis Reservas
+   =========================================================== */
+function setActiveLink(linkId) {
+  document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(linkId);
+  if (el) el.classList.add('active');
+}
+
+function showProfile() {
+  const r = document.getElementById('reservationsSection');
+  const p = document.getElementById('profileSection');
+  if (r) r.style.display = 'none';
+  if (p) p.style.display = 'block';
+  setActiveLink('linkPerfil');
+}
+
+function showReservations() {
+  // Primero mostrar la sección y cargar datos
+  const p = document.getElementById('profileSection');
+  const r = document.getElementById('reservationsSection');
+  if (p) p.style.display = 'none';
+  if (r) r.style.display = 'block';
+  setActiveLink('linkReservas');
+
+  // Cargar reservas desde el backend
+  fetch('/api/reservas/mis-reservas')
+    .then(res => {
+      if (!res.ok) throw new Error('Error al obtener reservas');
+      return res.json();
+    })
+    .then(reservas => {
+      renderReservasTable(reservas);
+    })
+    .catch(err => {
+      const container = document.getElementById('reservasContainer');
+      if (container) container.innerHTML =
+        `<p class="text-danger">Error al cargar reservas. Intenta nuevamente.</p>`;
+      console.error(err);
+    });
+}
+
+/* ===========================================================
+   Renderizador de la tabla de reservas
+   =========================================================== */
+function formatDateIso(dateIso) {
+  if (!dateIso) return '';
+  try {
+    const d = new Date(dateIso + 'T00:00:00');
+    return d.toLocaleDateString();
+  } catch (e) {
+    return dateIso;
+  }
+}
+
+function formatTime(t) {
+  if (!t) return '';
+  return String(t).slice(0,5);
+}
+
+function statusBadge(statusReserva) {
+  if (!statusReserva) return '';
+  if (statusReserva === 'RESERVADA') {
+    return `<span class="badge bg-success">${statusReserva}</span>`;
+  } else if (statusReserva === 'CONSUMIDA') {
+    return `<span class="badge bg-secondary">${statusReserva}</span>`;
+  } else if (statusReserva === 'CANCELADA') {
+    return `<span class="badge bg-danger">${statusReserva}</span>`;
+  }
+  return `<span class="badge bg-light text-dark">${statusReserva}</span>`;
+}
+
+function renderReservasTable(reservas) {
+  const container = document.getElementById('reservasContainer');
+
+  if (!container) return;
+
+  if (!reservas || reservas.length === 0) {
+    container.innerHTML = `<p>No has hecho ninguna reserva.</p>`;
+    return;
+  }
+
+  let html = `<div class="table-responsive">
+    <table class="table table-striped table-dark align-middle">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Hora inicio</th>
+          <th>Hora fin</th>
+          <th>Personas</th>
+          <th>Sala</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  reservas.forEach(r => {
+    const fecha = formatDateIso(r.fechaReserva);
+    const inicio = formatTime(r.horaInicio);
+    const fin = formatTime(r.horaFin);
+    const sala = r.amenityNombre || (r.amenity ? r.amenity : '');
+    const disabledAttr = (r.statusReserva !== 'RESERVADA') ? 'disabled' : '';
+    html += `<tr>
+      <td>${r.idReserva ?? ''}</td>
+      <td>${fecha}</td>
+      <td>${inicio}</td>
+      <td>${fin}</td>
+      <td>${r.numeroPersonas ?? ''}</td>
+      <td>${sala}</td>
+      <td>${statusBadge(r.statusReserva)}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" ${disabledAttr}
+            onclick="cancelReservaHandler(event, ${r.idReserva})">Cancelar</button>
+      </td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
+}
+
+/* ===========================================================
+   Cancelar reserva -> PATCH al backend cambiando statusReserva
+   =========================================================== */
+function cancelReservaHandler(event, idReserva) {
+  event.stopPropagation();
+  if (!confirm('¿Seguro que deseas cancelar esta reserva?')) return;
+
+  fetch(`/api/reservas/${idReserva}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ statusReserva: 'CANCELADA' })
+  })
+    .then(resp => {
+      if (resp.ok) {
+        showReservations();
+      } else {
+        resp.json().then(err => {
+          alert(err?.error || 'No se pudo cancelar la reserva.');
+        }).catch(() => alert('No se pudo cancelar la reserva.'));
+      }
+    })
+    .catch(() => alert('Error de red al intentar cancelar reserva.'));
+}
+
+/* ===========================================================
+   DOMContentLoaded: inicialización modales y carga del usuario
+   =========================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  // Inicializar modales Bootstrap
+  const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+  const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+
+  // funciones globales
+  window.showEditModal = () => editProfileModal.show();
+  window.showPasswordModal = () => changePasswordModal.show();
+
+  // ☠️ Eliminar (desactivar) cuenta
+  window.showDeleteModal = function() {
+    if (confirm('¿Seguro que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
+      fetch('/users/me/deactivate', { method: 'PATCH' })
+        .then(response => {
+          if (response.ok) {
+            document.cookie = "token=; Max-Age=0; path=/;";
+            document.cookie = "JSESSIONID=; Max-Age=0; path=/;";
+            window.location.href = '/homePage';
+          } else {
+            alert('Error al eliminar la cuenta.');
+          }
+        })
+        .catch(() => alert('Error al intentar eliminar la cuenta.'));
+    }
+  };
+
+  // ✏️ Editar perfil (tu listener original)
+  const editProfileForm = document.getElementById('editProfileForm');
+  if (editProfileForm) {
+    editProfileForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const data = {
+        nombre: e.target.nombre.value,
+        apellido: e.target.apellido.value,
+        tipoDocumento: e.target.tipoDocumento.value,
+        numeroDocumento: e.target.numeroDocumento.value,
+        telefono: e.target.telefono.value,
+        correo: e.target.correo.value,
+        role: "USER"
+      };
+
+      fetch('/users/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(r => {
+        if (r.ok) {
+          alert('✅ Perfil actualizado correctamente.');
+          editProfileModal.hide();
+          location.reload();
+        } else {
+          r.json().then(err => alert(err.message || 'Error al actualizar perfil.'));
+        }
+      })
+      .catch(() => alert('Error al conectar con el servidor.'));
+    });
+  }
+
+  // 🔐 Cambiar contraseña (tu listener original)
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const body = {
+        currentPassword: e.target.currentPassword.value,
+        newPassword: e.target.newPassword.value,
+        confirmPassword: e.target.confirmPassword.value
+      };
+
+      fetch('/users/me/change-password', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      .then(r => {
+        if (r.ok) {
+          alert('🔒 Contraseña cambiada con éxito.');
+          changePasswordModal.hide();
+          e.target.reset();
+        } else {
+          r.json().then(err => alert(err.message || 'Error al cambiar contraseña.'));
+        }
+      })
+      .catch(() => alert('Error al conectar con el servidor.'));
+    });
+  }
+
+  // 📥 Cargar datos en el modal de edición (al abrir) (tu listener original)
+  const editModalEl = document.getElementById('editProfileModal');
+  if (editModalEl) {
+    editModalEl.addEventListener('show.bs.modal', () => {
+      fetch('/users/me')
+        .then(r => {
+          if (!r.ok) throw new Error('Error al obtener datos.');
+          return r.json();
+        })
+        .then(user => {
+          document.getElementById('nombre').value = user.nombre || '';
+          document.getElementById('apellido').value = user.apellido || '';
+          document.getElementById('tipoDocumento').value = user.tipoDocumento || '';
+          document.getElementById('numeroDocumento').value = user.numeroDocumento || '';
+          document.getElementById('telefono').value = user.telefono || '';
+          document.getElementById('correo').value = user.correo || '';
+        })
+        .catch(() => alert('No se pudieron cargar los datos del perfil.'));
+    });
+  }
+
+  // Cargar datos del usuario (y mostrar perfil por defecto)
+  fetch("/users/me")
+    .then(res => {
+      if (!res.ok) throw new Error("Error al obtener usuario");
+      return res.json();
+    })
+    .then(user => {
+      const fullnameEl = document.querySelector(".user-fullname");
+      const usernameEl = document.querySelector(".user-username");
+      if (fullnameEl) fullnameEl.textContent = `${user.nombre} ${user.apellido}`;
+      if (usernameEl) usernameEl.textContent = `@${user.username}`;
+
+      const infoFields = document.querySelectorAll(".info-value");
+      infoFields.forEach(field => {
+        const fieldName = field.getAttribute("data-field");
+        if (user[fieldName]) field.textContent = user[fieldName];
+      });
+
+      // mostrar perfil por defecto
+      showProfile();
+    })
+    .catch(err => {
+      console.error('No se pudo cargar la información del usuario.', err);
+      showProfile();
+    });
+});
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

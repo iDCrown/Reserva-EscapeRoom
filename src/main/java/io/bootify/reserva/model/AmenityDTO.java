@@ -11,6 +11,8 @@ public class AmenityDTO {
 
     private Long idAmenity;
 
+    private String imageUrl;
+
     @Size(max = 255)
     private String nombre;
 
@@ -21,7 +23,5 @@ public class AmenityDTO {
 
     @Size(max = 255)
     private String categoria;
-
-    private Long reserva;
 
 }

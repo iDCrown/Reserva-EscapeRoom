@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle y Reserva - Escape Room</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Video de fondo con overlay */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .video-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(10, 0, 0, 0.85) 0%, 
+                rgba(20, 5, 10, 0.9) 50%, 
+                rgba(5, 0, 15, 0.85) 100%);
+            z-index: 1;
+        }
+
+        /* Simulación de niebla */
+        .fog {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .fog-layer {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(100, 100, 100, 0.1) 0%, transparent 70%);
+            animation: fogMove 20s infinite linear;
+        }
+
+        .fog-layer:nth-child(1) { animation-delay: 0s; opacity: 0.5; }
+        .fog-layer:nth-child(2) { animation-delay: -7s; opacity: 0.3; }
+        .fog-layer:nth-child(3) { animation-delay: -14s; opacity: 0.4; }
+
+        @keyframes fogMove {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(-50%) translateY(-10%); }
+        }
+
+        /* Cadenas colgantes */
+        .chains-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .chain {
+            position: absolute;
+            width: 2px;
+            height: 150px;
+            background: linear-gradient(to bottom, 
+                rgba(80, 80, 80, 0.6) 0%, 
+                rgba(60, 60, 60, 0.4) 50%, 
+                rgba(40, 40, 40, 0.2) 100%);
+            transform-origin: top;
+            animation: chainSwing 4s ease-in-out infinite;
+        }
+
+        .chain:nth-child(1) { left: 15%; animation-delay: 0s; }
+        .chain:nth-child(2) { left: 35%; animation-delay: 1s; height: 120px; }
+        .chain:nth-child(3) { left: 65%; animation-delay: 2s; height: 180px; }
+        .chain:nth-child(4) { left: 85%; animation-delay: 1.5s; height: 140px; }
+
+        @keyframes chainSwing {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        /* Container principal */
+        .detail-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .detail-wrapper {
+            display: flex;
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(15, 10, 20, 0.75);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.7),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 0 100px rgba(139, 0, 0, 0.3);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            animation: cardEntrance 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Efecto de luz parpadeante */
+        .light-flicker {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.15) 0%, transparent 70%);
+            animation: flicker 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.5; }
+            25% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+            75% { opacity: 0.9; }
+        }
+
+        /* Lado izquierdo - Información del Amenity (de escape_room_booking.html) */
+        .amenity-section {
+            flex: 1;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.15) 0%, rgba(80, 0, 0, 0.25) 100%);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(139, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .amenity-image {
+            width: 100%;
+            height: 300px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid rgba(139, 0, 0, 0.4);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            margin-bottom: 30px;
+        }
+
+        .amenity-badge {
+            position: absolute;
+            top: 70px;
+            right: 60px;
+            background: linear-gradient(135deg, #ff4444 0%, #8b0000 100%);
+            color: #ffffff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.6);
+        }
+
+        .amenity-title {
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.7);
+        }
+
+        .amenity-description {
+            color: #cccccc;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .amenity-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(139, 0, 0, 0.4);
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #8b0000 0%, #ff4444 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            color: #888888;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .detail-value {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .difficulty-stars {
+            display: flex;
+            gap: 3px;
+            margin-top: 20px;
+        }
+
+        .star {
+            color: #ff4444;
+            font-size: 1.3rem;
+        }
+
+        .star.empty {
+            color: #333333;
+        }
+
+        /* Lado derecho - Formulario de Reserva (de escape-room-detail.html) */
+        .reservation-form-section {
+            flex: 1;
+            padding: 50px 40px;
+            background: rgba(10, 5, 15, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .reservation-form-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .reservation-form-section::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .reservation-form-section::-webkit-scrollbar-thumb {
+            background: rgba(139, 0, 0, 0.5);
+            border-radius: 4px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: #ffffff;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-header p {
+            color: #888888;
+            font-size: 0.85rem;
+        }
+
+        /* Formulario */
+        .form-group-fecha {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
+            padding: 3em 0 6.5em 0;
+            flex-direction: column;
+            margin-bottom: 11px;
+            background: #1b0c16;
+            margin-bottom: 16px;
+
+        }
+        .form-group{
+        margin-bottom: 15px;
+
+        }
+
+        .form-label {
+            display: block;
+            color: #bbbbbb;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group{
+            position: relative;
+            display: flex;
+            align-items: center;
+            transform: scale(1.2);
+            transform-origin: top;
+            justify-content: center;
+        }
+
+        .input-group-custom {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            color: #666666;
+            font-size: 1rem;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 13px 15px 13px 45px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(139, 0, 0, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            outline: none;
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 45px;
+        }
+
+        .form-select option {
+            background: #1a0a0a;
+            color: #ffffff;
+        }
+
+        .form-input::placeholder {
+            color: #555555;
+        }
+
+        .form-input:focus, .form-select:focus {
+            background: rgba(20, 0, 0, 0.6);
+            border-color: #ff4444;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .form-input:focus ~ .input-icon,
+        .form-select:focus ~ .input-icon {
+            color: #ff4444;
+            transform: scale(1.1);
+        }
+
+        /* Botón de reserva */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #8b0000 0%, #c41e3a 50%, #8b0000 100%);
+            background-size: 200% 100%;
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-submit:hover {
+            background-position: 100% 0;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 0, 0, 0.6);
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:active {
+            transform: translateY(-1px);
+        }
+
+        /* Botón volver */
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(139, 0, 0, 0.2);
+            border: 2px solid rgba(139, 0, 0, 0.4);
+            border-radius: 10px;
+            color: #ff4444;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-back:hover {
+            background: rgba(139, 0, 0, 0.3);
+            border-color: #ff4444;
+            color: #ff6666;
+            transform: translateX(-5px);
+        }
+
+        /* Advertencia de terror */
+        .warning-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(139, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: #ff6666;
+            font-size: 0.85rem;
+            z-index: 100;
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+
+        /* Calendario */
+        .flatpickr-month{
+            border-radius: 20px !important;
+        }
+        .flatpickr-calendar{
+            border-radius: 20px !important;
+        }
+
+        .flatpickr-prev-month{
+            border-radius: 23px;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .warning-banner i {
+            margin-right: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .detail-wrapper {
+                flex-direction: column;
+            }
+
+            .amenity-section {
+                border-right: none;
+                border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+            }
+
+            .amenity-badge {
+                top: 60px;
+                right: 50px;
+            }
+
+            .reservation-form-section {
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .amenity-details {
+                grid-template-columns: 1fr;
+            }
+
+            .amenity-badge {
+                right: 40px;
+            }
+
+            .amenity-section {
+                padding: 40px 30px;
+            }
+
+            .reservation-form-section {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .amenity-section {
+                padding: 30px 20px;
+            }
+
+            .reservation-form-section {
+                padding: 30px 20px;
+            }
+
+            .amenity-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+     <div th:replace="~{fragments/fragments :: header}"></div>
+
+
+    <!-- Fondo con niebla -->
+    <div class="video-background">
+        <div class="fog">
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+            <div class="fog-layer"></div>
+        </div>
+    </div>
+
+    <!-- Cadenas decorativas -->
+    <div class="chains-container">
+        <div class="chain"></div>
+        <div class="chain"></div>
+        <div class="chain"></div>
+        <div class="chain"></div>
+    </div>
+
+    <!-- Container principal -->
+    <div class="detail-container">
+        <div class="detail-wrapper">
+            <!-- Efecto de luz parpadeante -->
+            <div class="light-flicker"></div>
+
+            <!-- Lado izquierdo - Información del Amenity (de escape_room_booking.html) -->
+            <div class="amenity-section">
+                <span class="amenity-badge" th:text="${amenity.categoria}">Terror, Suspenso</span>
+                
+                <img th:src="${amenity.imageUrl}" 
+                     alt="Escape Room" 
+                     class="amenity-image"
+                     onerror="this.src='https://via.placeholder.com/600x300/1a0a0a/ff4444?text=Escape+Room'">
+
+                <h1 class="amenity-title" th:text="${amenity.nombre}"></h1>
+                
+                <p class="amenity-description" th:text="${amenity.descripcion}">
+                    
+                </p>
+
+                <div class="amenity-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Capacidad</div>
+                            <div class="detail-value" th:text="'3 - ' + ${amenity.capacidad} + ' personas'"></div>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Duración</div>
+                            <div class="detail-value">60 minutos</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Edad mínima</div>
+                            <div class="detail-value">13+</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Dificultad</div>
+                            <div class="detail-value">Alta</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="difficulty-stars">
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star"></i>
+                    <i class="fas fa-star star empty"></i>
+                </div>
+            </div>
+
+            <!-- Lado derecho - Formulario de Reserva (de escape-room-detail.html) -->
+            <div class="reservation-form-section">
+                <div class="form-header">
+                    <h2>Reservar Ahora</h2>
+                    <p>Completa los datos para tu aventura</p>
+                </div>
+
+                <form th:action="@{/api/reservas/createReserva}" th:object="${reserva}" method="post">
+                    <!-- Hidden input para el amenity -->
+                    <input type="hidden" name="amenity" th:value="${amenity.idAmenity}">
+
+                    <!-- Fecha de reserva -->
+                    <div class="form-group-fecha">
+                        <label class="form-label" for="fechaReserva">Fecha de Reserva</label>
+                        <div class="input-group">
+                            <input 
+                                type="hidden" 
+                                name="fechaReserva"
+                                placeholder="Seleccione una fecha"
+                                th:field="*{fechaReserva}" />
+                            <div id="verfecha"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hora de inicio -->
+                    <div class="form-group">
+                        <label class="form-label" for="horaInicio">Hora de Inicio</label>
+                        <div class="input-group-custom">
+                            <select th:field="*{horaInicio}" 
+                                    id="horaInicio" 
+                                    class="form-select"
+                                    name="hora" 
+                                    required>
+                                <option value="">Seleccione una hora...</option>
+                            </select>
+                            <i class="fas fa-clock input-icon"></i>
+                        </div>
+                    </div>
+
+                    <!-- Número de personas -->
+                    <div class="form-group">
+                        <label class="form-label" for="numeroPersonas">Número de Participantes</label>
+                        <div class="input-group-custom">
+                            <select th:field="*{numeroPersonas}" 
+                                    id="numeroPersonas" 
+                                    class="form-select" 
+                                    required>
+                                <option value="">Seleccione cantidad...</option>
+                                <option th:each="i : ${#numbers.sequence(3, amenity.capacidad)}" 
+                                        th:value="${i}" 
+                                        th:text="${i} + ' persona' + ${i > 1 ? 's' : ''}">
+                                </option>
+                            </select>
+                            <i class="fas fa-users input-icon"></i>
+                        </div>
+                    </div>
+
+                    <!-- Botón submit -->
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-check-circle"></i> Confirmar Reserva
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner de advertencia -->
+    <div class="warning-banner">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>¿Estás listo para enfrentar tus miedos?</span>
+    </div>
+
+    <!-- Fragmento Footer -->
+    <div th:replace="~{fragments/fragments :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- calendario -->
+     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+        const form = document.querySelector("form");
+        const fechaInput = document.getElementById("fechaReserva");
+        const numeroPersonas = document.getElementById("numeroPersonas");
+
+        // Fecha mínima (hoy)
+        const hoy = new Date();
+        const hoyStr = hoy.toISOString().split("T")[0];
+        fechaInput.min = hoyStr;
+
+        // Fecha máxima (2 meses desde hoy)
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 2);
+        const maxDateStr = maxDate.toISOString().split("T")[0];
+        fechaInput.max = maxDateStr;
+
+        form.addEventListener("submit", function (e) {
+            const fechaSeleccionada = new Date(fechaInput.value);
+            const numeroSeleccionado = parseInt(numeroPersonas.value);
+
+        // Validación 1: Fecha válida
+        if (!fechaInput.value) {
+            alert("Por favor selecciona una fecha.");
+            e.preventDefault();
+            return;
+        }
+
+        if (fechaSeleccionada < hoy) {
+            alert("No puedes reservar una fecha anterior al día actual.");
+            e.preventDefault();
+            return;
+        }
+
+        if (fechaSeleccionada > maxDate) {
+            alert("Solo puedes reservar con máximo 2 meses de anticipación.");
+            e.preventDefault();
+            return;
+        }
+
+        // Validación 2: Hora seleccionada
+        const horaInicio = document.getElementById("horaInicio");
+        if (!horaInicio.value) {
+            alert("Selecciona una hora de inicio.");
+            e.preventDefault();
+            return;
+        }
+
+        // Validación 3: Número de personas dentro del rango
+        const capacidadMax = parseInt(numeroPersonas.querySelectorAll("option").length - 1);
+        if (!numeroSeleccionado || numeroSeleccionado > capacidadMax) {
+            alert("El número de participantes excede la capacidad disponible.");
+            e.preventDefault();
+            return;
+        }
+
+        // Validación 4: Confirmación final
+        if (!confirm("¿Deseas confirmar tu reserva?")) {
+            e.preventDefault();
+        }
+    });
+
+  // Horarios según el tipo de día
+  const horariosEntreSemana = ["10:00", "11:00", "12:00", "01:00", "02:00", "03:00", "04:00"];
+  const horariosFinDeSemana = ["10:00", "11:00", "12:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00"];
+
+    const select = document.getElementById("horaInicio");
+    const inputFecha = document.getElementById("fechaReserva");
+
+
+  flatpickr("#verfecha", {
+    inline: true,
+    maxDate: new Date().fp_incr(60),
+    locale: "es",
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    locale: {
+      firstDayOfWeek: 1
+    },
+    onChange: function(selectedDates, dateStr) {
+      if (!selectedDates.length) return;
+
+      const fechaSeleccionada = selectedDates[0];
+      const dia = fechaSeleccionada.getDay(); // 0 = domingo, 6 = sábado
+      const esFinDeSemana = (dia === 0 || dia === 6);
+
+      // Limpiar opciones previas
+     select.innerHTML = '<option value="">Seleccione un horario</option>';
+
+      // Escoger la lista de horarios según el día
+      const horarios = esFinDeSemana ? horariosFinDeSemana : horariosEntreSemana;
+
+      // ✅ Consultar al backend las horas ya reservadas
+      fetch(`/reservas/ocupadas?fecha=${dateStr}`)
+        .then(response => response.json())
+        .then(horasReservadas => {
+          // Agregar las opciones al select
+          horarios.forEach(hora => {
+            const option = document.createElement("option");
+            option.value = hora;
+            option.textContent = hora;
+
+            // Si la hora ya está reservada, deshabilitarla
+            if (horasReservadas.includes(hora)) {
+              option.disabled = true;
+              option.textContent += " (Reservado)";
+            }
+
+            select.appendChild(option);
+          });
+
+          // Actualizar input oculto
+          document.getElementById("fechaReserva").value = dateStr;
+        })
+        .catch(error => console.error("Error al obtener horas reservadas:", error));
+    }
+  });
+});
+    </script>
+</body>
+</html>

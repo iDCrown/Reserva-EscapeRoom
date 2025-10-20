@@ -1,31 +1,59 @@
 package io.bootify.reserva.rest;
 
+import io.bootify.reserva.domain.User;
+import io.bootify.reserva.model.AmenityDTO;
 import io.bootify.reserva.model.ReservaDTO;
+import io.bootify.reserva.service.AmenityService;
+import io.bootify.reserva.model.UserDTO;
 import io.bootify.reserva.service.ReservaService;
+import io.bootify.reserva.service.UserService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+import java.net.Authenticator;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.bootify.reserva.repos.UserRepository;
+import org.springframework.validation.BindingResult;
 
-
-@RestController
-@RequestMapping(value = "/api/reservas", produces = MediaType.APPLICATION_JSON_VALUE)
+@Controller
+@RequestMapping("/api/reservas")
 public class ReservaResource {
 
     private final ReservaService reservaService;
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final AmenityService amenityService;
 
-    public ReservaResource(final ReservaService reservaService) {
+    public ReservaResource(final ReservaService reservaService, final UserRepository userRepository, final AmenityService amenityService, final UserService userService) {
         this.reservaService = reservaService;
+        this.userRepository = userRepository;
+        this.amenityService = amenityService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -33,17 +61,78 @@ public class ReservaResource {
         return ResponseEntity.ok(reservaService.findAll());
     }
 
+    //Este mapeo es para mostrar el formulario de reserva pero realmente deberia ser el endpoind de detalle de un amenity
+    // @GetMapping("/verReserva")
+    // public String reserva(Model model) {
+    //     model.addAttribute("reserva", new ReservaDTO());
+    //     return "reservaForm";
+    // }
+
     @GetMapping("/{idReserva}")
     public ResponseEntity<ReservaDTO> getReserva(
             @PathVariable(name = "idReserva") final Long idReserva) {
         return ResponseEntity.ok(reservaService.get(idReserva));
     }
 
-    @PostMapping
-    @ApiResponse(responseCode = "201")
-    public ResponseEntity<Long> createReserva(@RequestBody @Valid final ReservaDTO reservaDTO) {
-        final Long createdIdReserva = reservaService.create(reservaDTO);
-        return new ResponseEntity<>(createdIdReserva, HttpStatus.CREATED);
+    @PostMapping("/createReserva")
+    public String createReserva(@ModelAttribute("reserva") @Valid final ReservaDTO reservaDTO, BindingResult result) {
+
+        //Obtener el Id del usuario autenticado
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        reservaDTO.setUser(user.getIdUser());
+
+        LocalTime horaInicio = reservaDTO.getHoraInicio();
+        System.out.println("Hora de inicio recibida: " + horaInicio);
+
+
+        if(horaInicio != null) {
+            final LocalTime horaFin = horaInicio.plusHours(1);
+            reservaDTO.setHoraFin(horaFin);
+        }
+
+        Long amenityId = reservaDTO.getAmenity();
+
+        AmenityDTO amenity = amenityService.get(amenityId);
+        System.out.println("Amenity ID recibido: " + amenity.getIdAmenity());
+
+        reservaDTO.setAmenity(amenity.getIdAmenity());
+        
+
+        //validaciones
+
+        LocalDate hoy = LocalDate.now();
+        LocalDate max = hoy.plusMonths(2);
+
+        if (reservaDTO.getFechaReserva().isBefore(hoy)) {
+        result.rejectValue("fechaReserva", "error.fechaReserva",
+                "No puedes reservar fechas pasadas.");
+            }
+
+            if (reservaDTO.getFechaReserva().isAfter(max)) {
+                result.rejectValue("fechaReserva", "error.fechaReserva",
+                        "La fecha de reserva no puede ser mayor a 2 meses desde hoy.");
+            }
+
+            // Verificar capacidad
+            AmenityDTO amenityDTO = amenityService.get(reservaDTO.getAmenity());
+            int capacidad = amenityDTO.getCapacidad();
+            if (reservaDTO.getNumeroPersonas() > capacidad) {
+                result.rejectValue("numeroPersonas", "error.numeroPersonas",
+                        "El número de participantes excede la capacidad máxima (" + capacidad + ").");
+            }
+
+            if (result.hasErrors()) {
+                return "reserva-form";
+            }
+
+        reservaService.create(reservaDTO);
+        return "redirect:/homePage";
     }
 
     @PutMapping("/{idReserva}")
@@ -59,6 +148,27 @@ public class ReservaResource {
     public ResponseEntity<Void> deleteReserva(
             @PathVariable(name = "idReserva") final Long idReserva) {
         reservaService.delete(idReserva);
+        return ResponseEntity.noContent().build();
+    }
+
+    //Nuevo endpoint para obtener las reservas del usuario autenticado dentro de la misma vista de myAccount.html
+    @GetMapping("/mis-reservas")
+    public ResponseEntity<List<ReservaDTO>> getMisReservas(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        UserDTO current = userService.getCurrentUser(userDetails);
+        List<ReservaDTO> list = reservaService.findAllByUserId(current.getIdUser());
+        return ResponseEntity.ok(list);
+    }
+
+    //Nuevo endpoint para actualizar el estado de una reserva
+    @PatchMapping("/{idReserva}/status")
+    public ResponseEntity<Void> updateStatus(@PathVariable Long idReserva,
+                                             @RequestBody Map<String,String> body,
+                                             @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        String username = userDetails.getUsername();
+        String newStatus = body.get("statusReserva");
+        reservaService.updateStatus(idReserva, newStatus, username);
         return ResponseEntity.noContent().build();
     }
 
