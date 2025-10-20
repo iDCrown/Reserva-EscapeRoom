@@ -73,6 +73,9 @@ public class User implements UserDetails{
     @Column
     private String telefono;
 
+    @Column
+    private String correo;
+
     @Column(nullable = false, unique = true)
     private String username;
 

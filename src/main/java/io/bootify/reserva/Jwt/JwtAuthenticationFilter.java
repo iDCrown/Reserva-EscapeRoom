@@ -2,6 +2,7 @@ package io.bootify.reserva.Jwt;
 
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.bootify.reserva.domain.Status;
 import io.bootify.reserva.domain.User;
 import io.bootify.reserva.service.JwtService;
 
@@ -32,29 +34,43 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        final String token = getTokenFromRequest(request);
-        final String username;
+        throws ServletException, IOException {
+            final String token = getTokenFromRequest(request);
+            final String username;
 
-        if (token == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        username = jwtService.getUsernameFromToken(token);
-
-        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null){
-
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            if(jwtService.isTokenValid(token, userDetails)){
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (token == null) {
+                filterChain.doFilter(request, response);
+                return;
             }
-        }
+
+            username = jwtService.getUsernameFromToken(token);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                // 🔍 Verificamos que el token sea válido
+                if (jwtService.isTokenValid(token, userDetails)) {
+
+                    // 🚨 Verificar si el usuario está activo
+                    // (Necesitamos que el userDetails realmente sea de tipo User)
+                    if (userDetails instanceof User) {
+                        User user = (User) userDetails;
+
+                        if (user.getStatus() == Status.INACTIVO) {
+                            // Si está inactivo, no lo autenticamos
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.getWriter().write("Tu cuenta está inactiva. Inicia sesión nuevamente o contacta soporte.");
+                            return;
+                        }
+                    }
+
+                    // ✅ Usuario activo: se establece autenticación normalmente
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            }
 
         filterChain.doFilter(request, response);
     }
