@@ -3,6 +3,8 @@ package io.bootify.reserva.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -64,6 +66,10 @@ public class Reserva {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "amenity_id")
     private Amenity amenity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusReserva statusReserva = StatusReserva.RESERVADA;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

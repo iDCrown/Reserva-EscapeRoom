@@ -30,7 +30,7 @@ public class MiPerfilResource {
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             
             // Solo nombre para el header
-            model.addAttribute("user", userEntity.getNombre());
+            model.addAttribute("user", userEntity.getUsername());
             // Objeto completo para myAccount
             model.addAttribute("userProfile", userEntity);
             

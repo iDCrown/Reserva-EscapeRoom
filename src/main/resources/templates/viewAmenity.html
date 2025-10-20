@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/site.css}">
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
     <style>
         * {
             margin: 0;
@@ -295,8 +296,6 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            overflow-y: auto;
-            max-height: 90vh;
         }
 
         .reservation-form-section::-webkit-scrollbar {
@@ -331,9 +330,22 @@
         }
 
         /* Formulario */
-        .form-group {
+        .form-group-fecha {
             margin-bottom: 20px;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
+            padding: 3em 0 6.5em 0;
+            flex-direction: column;
+            margin-bottom: 11px;
+            background: #1b0c16;
+            margin-bottom: 16px;
+
+        }
+        .form-group{
+        margin-bottom: 15px;
+
         }
 
         .form-label {
@@ -344,6 +356,15 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .input-group{
+            position: relative;
+            display: flex;
+            align-items: center;
+            transform: scale(1.2);
+            transform-origin: top;
+            justify-content: center;
         }
 
         .input-group-custom {
@@ -496,6 +517,18 @@
             animation: warningPulse 2s ease-in-out infinite;
         }
 
+        /* Calendario */
+        .flatpickr-month{
+            border-radius: 20px !important;
+        }
+        .flatpickr-calendar{
+            border-radius: 20px !important;
+        }
+
+        .flatpickr-prev-month{
+            border-radius: 23px;
+        }
+
         @keyframes warningPulse {
             0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
@@ -610,7 +643,7 @@
                         </div>
                         <div class="detail-content">
                             <div class="detail-label">Capacidad</div>
-                            <div class="detail-value" th:text="'2 - ' + ${amenity.capacidad} + ' personas'"></div>
+                            <div class="detail-value" th:text="'3 - ' + ${amenity.capacidad} + ' personas'"></div>
                         </div>
                     </div>
 
@@ -663,19 +696,18 @@
 
                 <form th:action="@{/api/reservas/createReserva}" th:object="${reserva}" method="post">
                     <!-- Hidden input para el amenity -->
-                    <input type="hidden" th:field="*{amenity}" th:value="${amenity.idAmenity}">
+                    <input type="hidden" name="amenity" th:value="${amenity.idAmenity}">
 
                     <!-- Fecha de reserva -->
-                    <div class="form-group">
+                    <div class="form-group-fecha">
                         <label class="form-label" for="fechaReserva">Fecha de Reserva</label>
-                        <div class="input-group-custom">
-                            <input type="date" 
-                                   th:field="*{fechaReserva}" 
-                                   id="fechaReserva" 
-                                   class="form-input" 
-                                   required
-                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"/>
-                            <i class="fas fa-calendar input-icon"></i>
+                        <div class="input-group">
+                            <input 
+                                type="hidden" 
+                                name="fechaReserva"
+                                placeholder="Seleccione una fecha"
+                                th:field="*{fechaReserva}" />
+                            <div id="verfecha"></div>
                         </div>
                     </div>
 
@@ -685,17 +717,10 @@
                         <div class="input-group-custom">
                             <select th:field="*{horaInicio}" 
                                     id="horaInicio" 
-                                    class="form-select" 
+                                    class="form-select"
+                                    name="hora" 
                                     required>
                                 <option value="">Seleccione una hora...</option>
-                                <option value="10:00">10:00 AM - 11:00 AM</option>
-                                <option value="11:30">11:30 AM - 12:30 PM</option>
-                                <option value="13:00">01:00 PM - 02:00 PM</option>
-                                <option value="14:30">02:30 PM - 03:30 PM</option>
-                                <option value="16:00">04:00 PM - 05:00 PM</option>
-                                <option value="17:30">05:30 PM - 06:30 PM</option>
-                                <option value="19:00">07:00 PM - 08:00 PM</option>
-                                <option value="20:30">08:30 PM - 09:30 PM</option>
                             </select>
                             <i class="fas fa-clock input-icon"></i>
                         </div>
@@ -710,7 +735,7 @@
                                     class="form-select" 
                                     required>
                                 <option value="">Seleccione cantidad...</option>
-                                <option th:each="i : ${#numbers.sequence(1, amenity.capacidad)}" 
+                                <option th:each="i : ${#numbers.sequence(3, amenity.capacidad)}" 
                                         th:value="${i}" 
                                         th:text="${i} + ' persona' + ${i > 1 ? 's' : ''}">
                                 </option>
@@ -738,26 +763,31 @@
     <div th:replace="~{fragments/fragments :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- calendario -->
+     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
-    const fechaInput = document.getElementById("fechaReserva");
-    const numeroPersonas = document.getElementById("numeroPersonas");
 
-    // Fecha mínima (hoy)
-    const hoy = new Date();
-    const hoyStr = hoy.toISOString().split("T")[0];
-    fechaInput.min = hoyStr;
 
-    // Fecha máxima (2 meses desde hoy)
-    const maxDate = new Date();
-    maxDate.setMonth(maxDate.getMonth() + 2);
-    const maxDateStr = maxDate.toISOString().split("T")[0];
-    fechaInput.max = maxDateStr;
+        const form = document.querySelector("form");
+        const fechaInput = document.getElementById("fechaReserva");
+        const numeroPersonas = document.getElementById("numeroPersonas");
 
-    form.addEventListener("submit", function (e) {
-        const fechaSeleccionada = new Date(fechaInput.value);
-        const numeroSeleccionado = parseInt(numeroPersonas.value);
+        // Fecha mínima (hoy)
+        const hoy = new Date();
+        const hoyStr = hoy.toISOString().split("T")[0];
+        fechaInput.min = hoyStr;
+
+        // Fecha máxima (2 meses desde hoy)
+        const maxDate = new Date();
+        maxDate.setMonth(maxDate.getMonth() + 2);
+        const maxDateStr = maxDate.toISOString().split("T")[0];
+        fechaInput.max = maxDateStr;
+
+        form.addEventListener("submit", function (e) {
+            const fechaSeleccionada = new Date(fechaInput.value);
+            const numeroSeleccionado = parseInt(numeroPersonas.value);
 
         // Validación 1: Fecha válida
         if (!fechaInput.value) {
@@ -799,6 +829,62 @@
             e.preventDefault();
         }
     });
+
+  // Horarios según el tipo de día
+  const horariosEntreSemana = ["10:00", "11:00", "12:00", "01:00", "02:00", "03:00", "04:00"];
+  const horariosFinDeSemana = ["10:00", "11:00", "12:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00"];
+
+    const select = document.getElementById("horaInicio");
+    const inputFecha = document.getElementById("fechaReserva");
+
+
+  flatpickr("#verfecha", {
+    inline: true,
+    maxDate: new Date().fp_incr(60),
+    locale: "es",
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    locale: {
+      firstDayOfWeek: 1
+    },
+    onChange: function(selectedDates, dateStr) {
+      if (!selectedDates.length) return;
+
+      const fechaSeleccionada = selectedDates[0];
+      const dia = fechaSeleccionada.getDay(); // 0 = domingo, 6 = sábado
+      const esFinDeSemana = (dia === 0 || dia === 6);
+
+      // Limpiar opciones previas
+     select.innerHTML = '<option value="">Seleccione un horario</option>';
+
+      // Escoger la lista de horarios según el día
+      const horarios = esFinDeSemana ? horariosFinDeSemana : horariosEntreSemana;
+
+      // ✅ Consultar al backend las horas ya reservadas
+      fetch(`/reservas/ocupadas?fecha=${dateStr}`)
+        .then(response => response.json())
+        .then(horasReservadas => {
+          // Agregar las opciones al select
+          horarios.forEach(hora => {
+            const option = document.createElement("option");
+            option.value = hora;
+            option.textContent = hora;
+
+            // Si la hora ya está reservada, deshabilitarla
+            if (horasReservadas.includes(hora)) {
+              option.disabled = true;
+              option.textContent += " (Reservado)";
+            }
+
+            select.appendChild(option);
+          });
+
+          // Actualizar input oculto
+          document.getElementById("fechaReserva").value = dateStr;
+        })
+        .catch(error => console.error("Error al obtener horas reservadas:", error));
+    }
+  });
 });
     </script>
 </body>

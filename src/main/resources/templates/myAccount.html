@@ -414,19 +414,19 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="user-fullname" th:text="${userProfile.nombre + ' ' + userProfile.apellido}"></div>
-                <div class="user-username" th:text="'@' + ${userProfile.username}"></div>
+                <div class="user-username" th:text="'@' + ${user}"></div>
             </div>
 
             <nav>
                 <ul class="sidebar-menu">
                     <li class="menu-item">
-                        <a href="javascript:void(0)" class="menu-link active">
+                        <a href="javascript:void(0)" id="linkPerfil" class="menu-link active" onclick="showProfile(); return false;">
                             <i class="fas fa-user-circle"></i>
                             <span>Mi Perfil</span>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a th:href="@{/mis-reservas}" class="menu-link">
+                        <a href="javascript:void(0)" id="linkReservas" class="menu-link" onclick="showReservations(); return false;">
                             <i class="fas fa-calendar-check"></i>
                             <span>Mis Reservas</span>
                         </a>
@@ -449,64 +449,81 @@
 
         <!-- Content Area -->
         <main class="content-area">
+
+            <div id="profileSection">
             <!-- Profile Information Card -->
-            <div class="profile-card">
-                <div class="card-header">
-                    <h2 class="card-title">Información Personal</h2>
-                    <button type="button" class="btn-change-password" onclick="showPasswordModal()">
-                        <i class="fas fa-key"></i> Cambiar Contraseña
-                    </button>
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">Información Personal</h2>
+                        <button type="button" class="btn-change-password" onclick="showPasswordModal()">
+                            <i class="fas fa-key"></i> Cambiar Contraseña
+                        </button>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-user"></i> Nombre Completo</div>
+                            <div class="info-value" data-field="nombreCompleto" th:text="${userProfile.nombre + ' ' + userProfile.apellido}">Nombre Apellido</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-at"></i> Usuario</div>
+                            <div class="info-value" data-field="username" th:text="${userProfile.username}">usuario123</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-id-card"></i> Tipo de Documento</div>
+                            <div class="info-value" data-field="tipoDocumento" th:text="${userProfile.tipoDocumento}">CC</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-hashtag"></i> Número de Documento</div>
+                            <div class="info-value" data-field="numeroDocumento" th:text="${userProfile.numeroDocumento}">1234567890</div>
+                        </div>
+
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-phone"></i> Teléfono</div>
+                            <div class="info-value" data-field="telefono" th:text="${userProfile.telefono}">+57 300 123 4567</div>
+                        </div>
+
+                        <!-- <div class="info-item">
+                            <div class="info-label"><i class="fas fa-calendar-alt"></i> Miembro desde</div>
+                            <div class="info-value" data-field="fechaRegistro" th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</div>
+                        </div> -->
+                    </div>
                 </div>
 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-user"></i> Nombre Completo</div>
-                        <div class="info-value" data-field="nombreCompleto" th:text="${userProfile.nombre + ' ' + userProfile.apellido}">Nombre Apellido</div>
+                <!-- Actions Card -->
+                <div class="actions-card">
+                    <h3 class="actions-title">Acciones Rápidas</h3>
+                    <div class="action-buttons">
+                        <a href="javascript:void(0)" class="btn-action btn-edit" onclick="showEditModal()">
+                            <span>
+                                <i class="fas fa-edit"></i> Editar mi información
+                            </span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        <a href="javascript:void(0)" class="btn-action btn-delete" onclick="showDeleteModal()">
+                            <span>
+                                <i class="fas fa-trash-alt"></i> Eliminar mi cuenta
+                            </span>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
                     </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-at"></i> Usuario</div>
-                        <div class="info-value" data-field="username" th:text="${userProfile.username}">usuario123</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-id-card"></i> Tipo de Documento</div>
-                        <div class="info-value" data-field="tipoDocumento" th:text="${userProfile.tipoDocumento}">CC</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-hashtag"></i> Número de Documento</div>
-                        <div class="info-value" data-field="numeroDocumento" th:text="${userProfile.numeroDocumento}">1234567890</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-phone"></i> Teléfono</div>
-                        <div class="info-value" data-field="telefono" th:text="${userProfile.telefono}">+57 300 123 4567</div>
-                    </div>
-
-                    <!-- <div class="info-item">
-                        <div class="info-label"><i class="fas fa-calendar-alt"></i> Miembro desde</div>
-                        <div class="info-value" data-field="fechaRegistro" th:text="${#temporals.format(user.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</div>
-                    </div> -->
                 </div>
             </div>
 
-            <!-- Actions Card -->
-            <div class="actions-card">
-                <h3 class="actions-title">Acciones Rápidas</h3>
-                <div class="action-buttons">
-                    <a href="javascript:void(0)" class="btn-action btn-edit" onclick="showEditModal()">
-                        <span>
-                            <i class="fas fa-edit"></i> Editar mi información
-                        </span>
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                    <a href="javascript:void(0)" class="btn-action btn-delete" onclick="showDeleteModal()">
-                        <span>
-                            <i class="fas fa-trash-alt"></i> Eliminar mi cuenta
-                        </span>
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
+            <!-- Reservations Section (oculta por defecto) -->
+            <div id="reservationsSection" style="display:none;">
+                <div class="profile-card"> 
+                    <div class="card-header">
+                        <h2 class="card-title">Mis Reservas</h2>
+                    </div>
+
+                    <div id="reservasContainer" class="p-2">
+                        <!-- Aquí se inyectará la tabla o el mensaje "No has hecho ninguna reserva." -->
+                        <p class="text-muted">Cargando reservas...</p>
+                    </div>
                 </div>
             </div>
         </main>
@@ -604,23 +621,164 @@
 </div>
 
 <script>
-/* ============================================================
-   👤 Cargar los datos del usuario al abrir la página
-============================================================ */
+/* ===========================================================
+   Funciones UI: alternar secciones Perfil <-> Mis Reservas
+   =========================================================== */
+function setActiveLink(linkId) {
+  document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(linkId);
+  if (el) el.classList.add('active');
+}
+
+function showProfile() {
+  const r = document.getElementById('reservationsSection');
+  const p = document.getElementById('profileSection');
+  if (r) r.style.display = 'none';
+  if (p) p.style.display = 'block';
+  setActiveLink('linkPerfil');
+}
+
+function showReservations() {
+  // Primero mostrar la sección y cargar datos
+  const p = document.getElementById('profileSection');
+  const r = document.getElementById('reservationsSection');
+  if (p) p.style.display = 'none';
+  if (r) r.style.display = 'block';
+  setActiveLink('linkReservas');
+
+  // Cargar reservas desde el backend
+  fetch('/api/reservas/mis-reservas')
+    .then(res => {
+      if (!res.ok) throw new Error('Error al obtener reservas');
+      return res.json();
+    })
+    .then(reservas => {
+      renderReservasTable(reservas);
+    })
+    .catch(err => {
+      const container = document.getElementById('reservasContainer');
+      if (container) container.innerHTML =
+        `<p class="text-danger">Error al cargar reservas. Intenta nuevamente.</p>`;
+      console.error(err);
+    });
+}
+
+/* ===========================================================
+   Renderizador de la tabla de reservas
+   =========================================================== */
+function formatDateIso(dateIso) {
+  if (!dateIso) return '';
+  try {
+    const d = new Date(dateIso + 'T00:00:00');
+    return d.toLocaleDateString();
+  } catch (e) {
+    return dateIso;
+  }
+}
+
+function formatTime(t) {
+  if (!t) return '';
+  return String(t).slice(0,5);
+}
+
+function statusBadge(statusReserva) {
+  if (!statusReserva) return '';
+  if (statusReserva === 'RESERVADA') {
+    return `<span class="badge bg-success">${statusReserva}</span>`;
+  } else if (statusReserva === 'CONSUMIDA') {
+    return `<span class="badge bg-secondary">${statusReserva}</span>`;
+  } else if (statusReserva === 'CANCELADA') {
+    return `<span class="badge bg-danger">${statusReserva}</span>`;
+  }
+  return `<span class="badge bg-light text-dark">${statusReserva}</span>`;
+}
+
+function renderReservasTable(reservas) {
+  const container = document.getElementById('reservasContainer');
+
+  if (!container) return;
+
+  if (!reservas || reservas.length === 0) {
+    container.innerHTML = `<p>No has hecho ninguna reserva.</p>`;
+    return;
+  }
+
+  let html = `<div class="table-responsive">
+    <table class="table table-striped table-dark align-middle">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha</th>
+          <th>Hora inicio</th>
+          <th>Hora fin</th>
+          <th>Personas</th>
+          <th>Sala</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+  reservas.forEach(r => {
+    const fecha = formatDateIso(r.fechaReserva);
+    const inicio = formatTime(r.horaInicio);
+    const fin = formatTime(r.horaFin);
+    const sala = r.amenityNombre || (r.amenity ? r.amenity : '');
+    const disabledAttr = (r.statusReserva !== 'RESERVADA') ? 'disabled' : '';
+    html += `<tr>
+      <td>${r.idReserva ?? ''}</td>
+      <td>${fecha}</td>
+      <td>${inicio}</td>
+      <td>${fin}</td>
+      <td>${r.numeroPersonas ?? ''}</td>
+      <td>${sala}</td>
+      <td>${statusBadge(r.statusReserva)}</td>
+      <td>
+        <button class="btn btn-sm btn-danger" ${disabledAttr}
+            onclick="cancelReservaHandler(event, ${r.idReserva})">Cancelar</button>
+      </td>
+    </tr>`;
+  });
+
+  html += `</tbody></table></div>`;
+  container.innerHTML = html;
+}
+
+/* ===========================================================
+   Cancelar reserva -> PATCH al backend cambiando statusReserva
+   =========================================================== */
+function cancelReservaHandler(event, idReserva) {
+  event.stopPropagation();
+  if (!confirm('¿Seguro que deseas cancelar esta reserva?')) return;
+
+  fetch(`/api/reservas/${idReserva}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ statusReserva: 'CANCELADA' })
+  })
+    .then(resp => {
+      if (resp.ok) {
+        showReservations();
+      } else {
+        resp.json().then(err => {
+          alert(err?.error || 'No se pudo cancelar la reserva.');
+        }).catch(() => alert('No se pudo cancelar la reserva.'));
+      }
+    })
+    .catch(() => alert('Error de red al intentar cancelar reserva.'));
+}
+
+/* ===========================================================
+   DOMContentLoaded: inicialización modales y carga del usuario
+   =========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  
-  // 🔧 Inicializar modales Bootstrap DESPUÉS de que el DOM esté listo
+  // Inicializar modales Bootstrap
   const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
   const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
 
-  // 🧩 Hacer las funciones globales para que puedan ser llamadas desde onclick
-  window.showEditModal = function() {
-    editProfileModal.show();
-  };
-
-  window.showPasswordModal = function() {
-    changePasswordModal.show();
-  };
+  // funciones globales
+  window.showEditModal = () => editProfileModal.show();
+  window.showPasswordModal = () => changePasswordModal.show();
 
   // ☠️ Eliminar (desactivar) cuenta
   window.showDeleteModal = function() {
@@ -639,97 +797,114 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // ✏️ Editar perfil
-  document.getElementById('editProfileForm').addEventListener('submit', e => {
-    e.preventDefault();
+  // ✏️ Editar perfil (tu listener original)
+  const editProfileForm = document.getElementById('editProfileForm');
+  if (editProfileForm) {
+    editProfileForm.addEventListener('submit', e => {
+      e.preventDefault();
 
-    const data = {
-      nombre: e.target.nombre.value,
-      apellido: e.target.apellido.value,
-      tipoDocumento: e.target.tipoDocumento.value,
-      numeroDocumento: e.target.numeroDocumento.value,
-      telefono: e.target.telefono.value,
-      role: "USER"
-    };
+      const data = {
+        nombre: e.target.nombre.value,
+        apellido: e.target.apellido.value,
+        tipoDocumento: e.target.tipoDocumento.value,
+        numeroDocumento: e.target.numeroDocumento.value,
+        telefono: e.target.telefono.value,
+        role: "USER"
+      };
 
-    fetch('/users/me', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    .then(r => {
-      if (r.ok) {
-        alert('✅ Perfil actualizado correctamente.');
-        editProfileModal.hide();
-        location.reload();
-      } else {
-        r.json().then(err => alert(err.message || 'Error al actualizar perfil.'));
-      }
-    })
-    .catch(() => alert('Error al conectar con el servidor.'));
-  });
-
-  // 🔐 Cambiar contraseña
-  document.getElementById('changePasswordForm').addEventListener('submit', e => {
-    e.preventDefault();
-
-    const body = {
-      currentPassword: e.target.currentPassword.value,
-      newPassword: e.target.newPassword.value,
-      confirmPassword: e.target.confirmPassword.value
-    };
-
-    fetch('/users/me/change-password', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
-    .then(r => {
-      if (r.ok) {
-        alert('🔒 Contraseña cambiada con éxito.');
-        changePasswordModal.hide();
-        e.target.reset();
-      } else {
-        r.json().then(err => alert(err.message || 'Error al cambiar contraseña.'));
-      }
-    })
-    .catch(() => alert('Error al conectar con el servidor.'));
-  });
-
-  // 📥 Cargar datos en el modal de edición (al abrir)
-  document.getElementById('editProfileModal').addEventListener('show.bs.modal', () => {
-    fetch('/users/me')
+      fetch('/users/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
       .then(r => {
-        if (!r.ok) throw new Error('Error al obtener datos.');
-        return r.json();
+        if (r.ok) {
+          alert('✅ Perfil actualizado correctamente.');
+          editProfileModal.hide();
+          location.reload();
+        } else {
+          r.json().then(err => alert(err.message || 'Error al actualizar perfil.'));
+        }
       })
-      .then(user => {
-        document.getElementById('nombre').value = user.nombre || '';
-        document.getElementById('apellido').value = user.apellido || '';
-        document.getElementById('tipoDocumento').value = user.tipoDocumento || '';
-        document.getElementById('numeroDocumento').value = user.numeroDocumento || '';
-        document.getElementById('telefono').value = user.telefono || '';
-      })
-      .catch(() => alert('No se pudieron cargar los datos del perfil.'));
-  });
+      .catch(() => alert('Error al conectar con el servidor.'));
+    });
+  }
 
-  // 🧠 Cargar información del usuario en la página
+  // 🔐 Cambiar contraseña (tu listener original)
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  if (changePasswordForm) {
+    changePasswordForm.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const body = {
+        currentPassword: e.target.currentPassword.value,
+        newPassword: e.target.newPassword.value,
+        confirmPassword: e.target.confirmPassword.value
+      };
+
+      fetch('/users/me/change-password', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      .then(r => {
+        if (r.ok) {
+          alert('🔒 Contraseña cambiada con éxito.');
+          changePasswordModal.hide();
+          e.target.reset();
+        } else {
+          r.json().then(err => alert(err.message || 'Error al cambiar contraseña.'));
+        }
+      })
+      .catch(() => alert('Error al conectar con el servidor.'));
+    });
+  }
+
+  // 📥 Cargar datos en el modal de edición (al abrir) (tu listener original)
+  const editModalEl = document.getElementById('editProfileModal');
+  if (editModalEl) {
+    editModalEl.addEventListener('show.bs.modal', () => {
+      fetch('/users/me')
+        .then(r => {
+          if (!r.ok) throw new Error('Error al obtener datos.');
+          return r.json();
+        })
+        .then(user => {
+          document.getElementById('nombre').value = user.nombre || '';
+          document.getElementById('apellido').value = user.apellido || '';
+          document.getElementById('tipoDocumento').value = user.tipoDocumento || '';
+          document.getElementById('numeroDocumento').value = user.numeroDocumento || '';
+          document.getElementById('telefono').value = user.telefono || '';
+        })
+        .catch(() => alert('No se pudieron cargar los datos del perfil.'));
+    });
+  }
+
+  // Cargar datos del usuario (y mostrar perfil por defecto)
   fetch("/users/me")
     .then(res => {
       if (!res.ok) throw new Error("Error al obtener usuario");
       return res.json();
     })
     .then(user => {
-      document.querySelector(".user-fullname").textContent = `${user.nombre} ${user.apellido}`;
-      document.querySelector(".user-username").textContent = `@${userProfile.username}`;
+      const fullnameEl = document.querySelector(".user-fullname");
+      const usernameEl = document.querySelector(".user-username");
+      if (fullnameEl) fullnameEl.textContent = `${user.nombre} ${user.apellido}`;
+      if (usernameEl) usernameEl.textContent = `@${user.username}`;
 
       const infoFields = document.querySelectorAll(".info-value");
       infoFields.forEach(field => {
         const fieldName = field.getAttribute("data-field");
         if (user[fieldName]) field.textContent = user[fieldName];
       });
+
+      // mostrar perfil por defecto
+      showProfile();
     })
-    /* .catch(() => alert("No se pudo cargar la información del usuario.")); */
+    .catch(err => {
+      console.error('No se pudo cargar la información del usuario.', err);
+      showProfile();
+    });
 });
 </script>
 
